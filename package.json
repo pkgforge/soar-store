@@ -30,7 +30,7 @@
     "web-vitals": "^4.2.3"
   },
   "scripts": {
-    "start": "cross-env BROWSER=none NODE_OPTIONS=--max-old-space-size=2048 rsbuild dev",
+    "start": "cross-env BROWSER=none rsbuild dev",
     "build": "rsbuild build",
     "test": "rsbuild test",
     "dev": "rsbuild dev"

@@ -1,7 +1,7 @@
 [package]
 name = "ahqstore-types"
 description = "Standard types used by AHQ Store"
-version = "3.7.6"
+version = "3.8.0"
 edition = "2021"
 license-file = "../LICENSE.md"
 repository = "https://github.com/ahqsoftwares/tauri-ahq-store"
@@ -39,3 +39,4 @@ js = [
   "dep:tsify",
   "dep:kfghdfghdfkgh_js_macros",
 ]
+all_platforms = []

@@ -15,7 +15,7 @@ import {
   isInstalled,
   unInstall,
 } from "../../resources/api/updateInstallWorker";
-import PopUp from "../../resources/components/popup";
+import { ApplicationPopup } from "../../resources/components/popup";
 import { invoke } from "@tauri-apps/api/core";
 import { IoCheckmarkCircle, IoWarning } from "react-icons/io5";
 import { FaAndroid, FaLinux } from "react-icons/fa6";
@@ -29,6 +29,9 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+
+// Icon
+import pkg from "./package.png";
 
 interface AppDataPropsModal {
   shown: boolean;
@@ -86,7 +89,7 @@ export default function ShowModal(props: AppDataPropsModal) {
   } = (window as any).prefs as { accessPrefs: { install_apps: boolean } };
 
   const [appData, setAppData] = useState<appData>(defAppData);
-  const [resources, setResources] = useState<string[]>([]);
+  const [resources, setResources] = useState<string[]>([pkg]);
 
   const button = useRef<HTMLButtonElement>("" as any);
   const [installed, setInstalled] = useState<boolean | "hidden">(false);
@@ -166,7 +169,7 @@ export default function ShowModal(props: AppDataPropsModal) {
   }, [installData]);
 
   useEffect(() => {
-    setResources([]);
+    setResources([pkg]);
 
     const data = [];
     for (let i = 0; i <= appData.displayImages.length; i++) {
@@ -199,8 +202,8 @@ export default function ShowModal(props: AppDataPropsModal) {
   };
 
   return (
-    <PopUp shown={shown} width="95%" height="90%">
-      <div className="bg-base-200 flex flex-col w-[100%] h-[100%]">
+    <ApplicationPopup shown={shown}>
+      <div className="flex flex-col w-[100%] h-[100%]">
         <div className="flex w-[100%] h-[100%] app-data">
           <div
             className={`div w-[40%] p-2 flex flex-col items-center rounded-xl shadow-xl`}
@@ -209,13 +212,12 @@ export default function ShowModal(props: AppDataPropsModal) {
               onClick={() => {
                 change();
               }}
-              className={`rounded-md p-1 dui-btn dui-btn-square mr-auto`}
+              className={`rounded-md p-1 dui-btn dui-btn-outline dui-btn-square mr-auto`}
               style={{ transition: "all 250ms linear" }}
             >
               <BiArrowBack
                 width="2em"
                 height="2em"
-                color={dark ? "white" : "black"}
                 style={{
                   minWidth: "2em",
                   minHeight: "2em",
@@ -241,7 +243,7 @@ export default function ShowModal(props: AppDataPropsModal) {
             )}
 
             <h1
-              className={`mt-5 text-3xl ${
+              className={`mt-5 text-3xl text-center ${
                 dark ? "text-slate-200" : "text-slate-800"
               }`}
             >
@@ -553,6 +555,6 @@ export default function ShowModal(props: AppDataPropsModal) {
           </div>
         </div>
       </div>
-    </PopUp>
+    </ApplicationPopup>
   );
 }

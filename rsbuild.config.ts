@@ -37,16 +37,8 @@ export default defineConfig({
     },
   },
   dev: {
-    progressBar: true,
     hmr: true,
-    watchFiles: {
-      paths: ["./index.html", "./src/**/*"],
-    },
-    client: {
-      host: 'localhost',
-      port: '3000',
-      protocol: 'ws',
-    },
+    liveReload: true
   },
   server: {
     port: 3000,

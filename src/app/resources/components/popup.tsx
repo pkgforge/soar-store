@@ -1,13 +1,13 @@
 import Modal from "react-modal";
 
-interface PasswordProps {
+interface Props {
   shown: boolean;
   children: JSX.Element;
   width?: string;
   height?: string;
 }
 
-export default function PopUp(props: PasswordProps) {
+export default function PopUp(props: Props) {
   const { width, height, shown } = props;
 
   const modalStyles = {
@@ -41,4 +41,17 @@ export default function PopUp(props: PasswordProps) {
       {props.children}
     </Modal>
   );
+}
+
+
+interface SimplifiedProps {
+  shown: boolean;
+  children: JSX.Element;
+}
+
+export function ApplicationPopup(props: SimplifiedProps) {
+  const { shown, children } = props;
+  return <div className={`${shown ? "" : "hidden"} absolute rounded-md z-[1000] w-[calc(100vw-12rem)] h-[98vh]`}>
+    {children}
+  </div>
 }

@@ -65,8 +65,13 @@ pub async fn av_scan(resp: &mut Library, state: &mut DaemonState, imp: &mut bool
       if !av_flagged.unwrap_or(true) {
         resp.status = AppStatus::Installing;
 
-        state.step = Step::Installing;
-        state.data = Some(DaemonData::Inst(install_app(&app).await.unwrap()));
+        if let Some(x) = install_app(&app).await {
+          state.step = Step::Installing;
+          state.data = Some(DaemonData::Inst(x));
+        } else {
+          state.step = Step::Done;
+          resp.status = AppStatus::NotSuccessful;
+        }
       } else {
         state.step = Step::Done;
 

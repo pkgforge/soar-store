@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import fetchApps, {
   appData,
 } from "../../resources/api/fetchApps";
-import SearchResult from "../components/search_results";
 import AppCard from "../components/app_card";
 
-import { getData, setData } from "../../resources/utilities/database";
 import { search } from "@/app/resources/core";
 
 interface SearchProps {
@@ -14,17 +12,20 @@ interface SearchProps {
   set: Function;
   show: Function;
   dark: boolean;
-  special?: boolean;
   isAdmin: boolean;
+  hide: boolean;
 }
 
 export default function Search(props: SearchProps) {
-  const { query, set, show, dark, special, isAdmin } = props;
+  const { query, hide, set, show, dark } = props;
 
   const [matches, setMatches] = useState<appData[]>([]);
   const [searched, setSearched] = useState<boolean>(false);
 
   useEffect(() => {
+    setMatches([]);
+    setSearched(false);
+
     (async () => {
       const results = await getDataFromMatches(await getMatches(query));
 
@@ -33,57 +34,10 @@ export default function Search(props: SearchProps) {
     })();
   }, [query]);
 
-  if (!special) {
-    return (
-      <>
-        {matches.map((app, index) => {
-          return (
-            <React.Fragment key={`${index}`}>
-              <SearchResult
-                dark={dark}
-                {...app}
-                set={set}
-                show={show}
-                isAdmin={isAdmin}
-              />
-              {String(index + 1) !== String(matches.length) ? (
-                <div
-                  className={`h-[2px] rounded-xl my-[3px] mb-[5px] ${
-                    dark ? "bg-white" : "bg-gray-900"
-                  } w-[100%]`}
-                ></div>
-              ) : (
-                <></>
-              )}
-            </React.Fragment>
-          );
-        })}
-        {matches.length === 0 ? (
-          <div
-            className={`mx-auto my-2 flex items-center justify-center ${
-              dark ? "text-slate-200" : ""
-            }`}
-          >
-            <span className="block">
-              {searched ? (
-                <>0 Apps Found</>
-              ) : (
-                <div className="flex">
-                  <span className="dui-loading dui-loading-spinner" />
-                  <span className="ml-2">Just a moment...</span>
-                </div>
-              )}
-            </span>
-          </div>
-        ) : (
-          <></>
-        )}
-      </>
-    );
-  } else {
-    return (
+
+  return (
       <div
-        className={`w-[100%] h-[auto] overflow-scroll search-app-grid ${
+        className={`${hide ? "hidden" : ""} w-[100%] h-[auto] overflow-scroll search-app-grid ${
           matches.length == 0 ? "special-app-grid" : ""
         }`}
       >
@@ -104,7 +58,7 @@ export default function Search(props: SearchProps) {
           <div
             className={`mx-auto my-2 flex items-center justify-center ${
               dark ? "text-slate-200" : ""
-            }`}
+              }`}
           >
             <span className="block">
               {searched ? (
@@ -123,11 +77,15 @@ export default function Search(props: SearchProps) {
         <div className="h-[5rem]"></div>
       </div>
     );
-  }
 }
 
 async function getMatches(query: string): Promise<string[]> {
-  return await search(query);
+  const matches = await search<{ id: string }[]>(query);
+  const finalmatches = matches.map(({ id }) => id);
+
+  finalmatches.length = 40;
+
+  return finalmatches;
 }
 
 async function getDataFromMatches(matches: Array<string>) {

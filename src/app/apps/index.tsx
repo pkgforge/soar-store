@@ -1,7 +1,7 @@
 /*
 React Native
 */
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { FiSearch as FcSearch } from "react-icons/fi";
 import { Auth } from "../../auth";
 /*
@@ -38,24 +38,9 @@ export default function Apps(props: AppsProps) {
 
   const [shown, showModal] = useState(false),
     [search, searchText] = useState(""),
+    [toSearch, setToSearch] = useState(""),
     [enter, setEnter] = useState(false),
     [data, setData] = useState("");
-
-  function Fix() {
-    const element = document.querySelector("#search-result") as any;
-    if (element) {
-      element.style = `width: ${
-        document.querySelector("#get-width")?.clientWidth
-      }px;`;
-    }
-  }
-
-  window.addEventListener("resize", () => {
-    Fix();
-  });
-  useEffect(() => {
-    Fix();
-  });
 
   function change() {
     showModal(!shown);
@@ -73,18 +58,20 @@ export default function Apps(props: AppsProps) {
 
   return (
     <div className="menu">
-      <Modal
+      {shown && <Modal
         isAdmin={isAdmin}
         shown={shown}
         dark={dark}
         change={change}
         installData={data}
-      />
+      />}
       <SearchModal
         shown={enter}
         dark={dark}
         change={changeEnter}
         search={search}
+        hide={shown}
+        setQuery={setToSearch}
         searchText={(string) => {
           searchText(string);
         }}
@@ -92,17 +79,7 @@ export default function Apps(props: AppsProps) {
       {!enter ? (
         <>
           <div
-            className="w-[40%] mt-2"
-            onBlur={() => {
-              setTimeout(() => {
-                setEnter((enter) => {
-                  if (!enter) {
-                    searchText("");
-                  }
-                  return enter;
-                });
-              }, 100);
-            }}
+            className={`${shown ? "hidden" : ""} w-[40%] mt-2`}
           >
             <div
               className="w-[100%] flex border-[1px] border-base-content rounded-md"
@@ -112,8 +89,7 @@ export default function Apps(props: AppsProps) {
                 className={`search-input search-input-m-modified ${
                   dark ? "style-input-d search-input-m-modified-d" : ""
                 }`}
-                placeholder={`Quick Search`}
-                id={"quick-search"}
+                placeholder={`Search`}
                 autoCorrect={"off"}
                 autoCapitalize={"off"}
                 value={search}
@@ -129,9 +105,11 @@ export default function Apps(props: AppsProps) {
                   if (e.key === "Enter") {
                     if (search.length >= 1) {
                       setEnter(true);
+                      setToSearch(search);
                     }
                   } else {
                     setEnter(false);
+                    setToSearch("");
                   }
                 }}
                 autoComplete={"off"}
@@ -162,30 +140,9 @@ export default function Apps(props: AppsProps) {
                 <FcSearch size={"1.2em"} />{" "}
               </button>
             </div>
-            <div
-              className={`absolute ${
-                !dark ? "bg-gray-100 text-black" : "bg-gray-800 text-white"
-              } rounded-md shadow-2xl mt-1 ${
-                search.length > 0 && !enter ? "border border-white" : ""
-              }`}
-              id="search-result"
-            >
-              {search.length > 0 && !enter ? (
-                <Search
-                  key={"YourBestSearchAlgorithm"}
-                  query={search}
-                  set={setData}
-                  show={change}
-                  dark={dark}
-                  isAdmin={isAdmin}
-                />
-              ) : (
-                <></>
-              )}
-            </div>
           </div>
 
-          <div className="appss">
+          <div className={`${shown ? "hidden" : ""} appss`}>
             {apps.length === 0 ? (
               <div
                 className={`flex justify-center text-center items-center mt-9 ${dark ? "text-yellow-400" : "text-yellow-600"}`}
@@ -231,12 +188,11 @@ export default function Apps(props: AppsProps) {
         </>
       ) : (
         <Search
-          key={"YourBestSearchAlgo2"}
-          special={true}
-          query={search}
+            query={toSearch}
           set={setData}
           show={change}
-          dark={dark}
+            dark={dark}
+            hide={shown}
           isAdmin={isAdmin}
         />
       )}

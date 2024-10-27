@@ -534,10 +534,10 @@ fn set_progress(
   let _ = window.set_progress_bar(ProgressBarState {
     progress,
     status: Some(match state {
-      0x00000001 => ProgressBarStatus::Indeterminate,
-      0x00000002 => ProgressBarStatus::Normal,
-      0x00000004 => ProgressBarStatus::Error,
-      0x00000008 => ProgressBarStatus::Paused,
+      1 => ProgressBarStatus::Indeterminate,
+      2 => ProgressBarStatus::Normal,
+      4 => ProgressBarStatus::Error,
+      8 => ProgressBarStatus::Paused,
       _ => ProgressBarStatus::None,
     }),
   });

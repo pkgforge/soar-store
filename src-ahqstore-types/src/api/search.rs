@@ -110,6 +110,7 @@ pub async fn get_search(commit: Option<&Commits>, query: &str) -> Result<Vec<Res
     res.push(RespSearchEntry::Static(&search[val.index]));
   }
 
+  #[cfg(any(feature = "all_platforms", target_os = "linux"))]
   for val in flatpak::search(query).await.context("")? {
     res.push(RespSearchEntry::Owned(val));
   }

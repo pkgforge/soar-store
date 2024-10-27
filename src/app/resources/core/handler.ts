@@ -2,6 +2,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { Downloaded, ServerResponse, interpret } from "./structs";
 import { Prefs } from ".";
+import { Library } from "./installer";
 
 const appWindow = getCurrentWebviewWindow();
 let ref_counter = 1;
@@ -78,14 +79,30 @@ appWindow.listen<string[]>("ws_resp", async ({ payload: pload }) => {
       const toObj = await interpret(payload);
 
       if (toObj) {
-        if (toObj.method == "DownloadProgress") {
-          const data = toObj.data as Downloaded;
+        console.log(toObj);
+        if (toObj.method == "Library") {
+          const data = toObj.data as Library[];
 
-          invoke("set_progress", {
-            state: 1,
-            c: data.c,
-            t: data.t,
-          });
+          if (data.length == 0) {
+            invoke("set_progress", {
+              state: 0
+            });
+          } else {
+
+            data.forEach((d) => {
+              if (d.to == "Install" && d.status == "Downloading...") {
+                invoke("set_progress", {
+                  state: 2,
+                  c: Number(d.progress.toFixed(0)),
+                  t: 100,
+                });
+              } else if (d.status == "Installing..." || d.status == "Uninstalling..." || d.status == "Scanning for Viruses!") {
+                invoke("set_progress", {
+                  state: 1,
+                });
+              }
+            });
+          }
           prog = 1;
         } else {
           if (prog != 0) {

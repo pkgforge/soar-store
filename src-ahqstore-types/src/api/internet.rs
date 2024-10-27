@@ -109,14 +109,17 @@ pub async fn get_all_search(commit: &Commits) -> Result<Vec<SearchEntry>> {
     .await
     .context("")?;
 
-  let total = &*WINGET_TOTAL;
-  let search = &*WINGET_SEARCH;
+  #[cfg(any(feature = "all_platforms", windows))]
+  {
+    let total = &*WINGET_TOTAL;
+    let search = &*WINGET_SEARCH;
 
-  result.append(
-    &mut methods::get_full_search(total, search, &commit.winget)
-      .await
-      .context("")?,
-  );
+    result.append(
+      &mut methods::get_full_search(total, search, &commit.winget)
+        .await
+        .context("")?,
+    );
+  }
 
   Ok(result)
 }

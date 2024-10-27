@@ -1,3 +1,5 @@
+#![allow(dead_code, unused_imports, reason = "Conditional compilation")]
+
 use serde::{Deserialize, Serialize};
 use serde_json::{from_str, to_string, to_string_pretty};
 use std::fs::read;
@@ -17,6 +19,9 @@ pub type Str = String;
 pub type AppData = (String, String);
 #[cfg_attr(feature = "js", declare)]
 pub type RefId = u64;
+
+#[cfg_attr(feature = "js", declare)]
+pub type Success = bool;
 
 pub mod app;
 pub use app::*;
@@ -103,6 +108,8 @@ pub enum Command {
   SetPrefs(RefId, Prefs),
 
   AddPkg(RefId, Package),
+
+  ExecutableRunStatus(RefId, Success)
 }
 
 impl Command {
@@ -249,6 +256,7 @@ pub enum ResponseToSend {
   InstalledPkg(RefId),
 
   TerminateBlock(RefId),
+  RunExecutable(RefId, String)
 }
 
 #[cfg_attr(feature = "js", wasm_bindgen)]

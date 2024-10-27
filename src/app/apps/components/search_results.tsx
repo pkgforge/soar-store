@@ -8,7 +8,7 @@ interface LoadProps extends ApplicationData {
 }
 
 export default function Load(props: LoadProps) {
-  const { icon, appDisplayName, description, show, set, appId, dark } = props;
+  const { appDisplayName, description, show, set, appId, dark } = props;
 
   return (
     <div
@@ -20,7 +20,7 @@ export default function Load(props: LoadProps) {
       }}
     >
       <img
-        src={icon}
+        src={""}
         alt="Logo"
         style={{ height: "2rem", marginTop: "auto", marginBottom: "auto" }}
       />
