@@ -23,6 +23,9 @@ use tokio::{
 
 use crate::utils::{get_iprocess, ws_send};
 
+#[cfg(windows)]
+use crate::handlers::pipe;
+
 use super::{
   av::{self, scan::Malicious},
   get_app, get_commit, get_prefs, list_apps,
@@ -112,6 +115,13 @@ pub struct DaemonState {
 }
 
 async fn run_daemon(mut rx: Receiver<Command>) {
+  println!("Daemon Running");
+
+  #[cfg(windows)]
+  tokio::spawn(async {
+    pipe::launch().await;
+  });
+
   let _ = av::update::update_win_defender();
   let mut state = DaemonState::default();
 

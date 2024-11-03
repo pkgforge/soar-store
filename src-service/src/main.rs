@@ -65,6 +65,9 @@ pub fn main() -> SResult<()> {
 
 #[cfg(windows)]
 fn service_runner<T>(_: T) {
+  #[cfg(debug_assertions)]
+  use encryption::encrypt2;
+
   #[cfg(all(windows, not(feature = "no_service")))]
   {
     let handler: Arc<Mutex<Option<ServiceStatusHandle>>> = Arc::new(Mutex::new(None));
@@ -126,11 +129,18 @@ fn service_runner<T>(_: T) {
       .unwrap();
   }
 
-  tokio::runtime::Builder::new_current_thread()
+  tokio::runtime::Builder::new_multi_thread()
+    .worker_threads(2)
     .enable_all()
     .build()
     .unwrap()
     .block_on(async {
+      #[cfg(debug_assertions)]
+      {
+        let vect = encrypt2("%Qzn835y37z%%^&*&^%&^%^&%^".into()).unwrap();
+        println!("{:?}", vect);
+      }
+
       start().await;
     });
 }

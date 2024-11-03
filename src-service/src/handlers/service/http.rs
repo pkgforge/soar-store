@@ -1,5 +1,6 @@
 use ahqstore_types::{
-  internet::{get_all_commits as t_get_commit, get_app as t_get_app}, AppStatus, Commit, Commits, Library
+  internet::{get_all_commits as t_get_commit, get_app as t_get_app},
+  AppStatus, Commit, Commits, Library,
 };
 use lazy_static::lazy_static;
 use reqwest::{Client, ClientBuilder, Request, StatusCode};

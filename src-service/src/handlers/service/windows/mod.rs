@@ -16,14 +16,13 @@ use std::{
 };
 use tokio::spawn;
 
-use crate::{
-  utils::{
-    get_installer_file, get_program_folder, get_programs, get_target_lnk,
-    structs::{AHQStoreApplication, AppData},
-  },
+use crate::utils::{
+  get_installer_file, get_program_folder, get_programs, get_target_lnk,
+  structs::{AHQStoreApplication, AppData},
 };
 
 use super::{InstallResult, UninstallResult};
+pub use exe::pipe;
 
 pub fn run(path: &str, args: &[&str]) -> Result<Child, Error> {
   Command::new(path)
@@ -42,7 +41,7 @@ pub fn unzip(path: &str, dest: &str) -> Result<Child, Error> {
     .spawn()
 }
 
-pub async fn install_app(app: &AHQStoreApplication) -> Option<InstallResult> {
+pub async fn install_app(app: &AHQStoreApplication, update: bool) -> Option<InstallResult> {
   let file = get_installer_file(app);
 
   let Some(win32) = app.get_win_download() else {
@@ -52,7 +51,7 @@ pub async fn install_app(app: &AHQStoreApplication) -> Option<InstallResult> {
   match win32.installerType {
     InstallerFormat::WindowsZip => load_zip(&file, app),
     InstallerFormat::WindowsInstallerMsi => install_msi(&file, app),
-    InstallerFormat::WindowsInstallerExe => exe::install(&file, app),
+    InstallerFormat::WindowsInstallerExe => exe::install(&file, app, update).await,
     _ => None,
   }
 }
@@ -135,7 +134,8 @@ pub fn load_zip(zip: &str, app: &AHQStoreApplication) -> Option<InstallResult> {
       .ok()?;
 
       Some(())
-    })().await;
+    })()
+    .await;
 
     cleanup(val.is_none());
 

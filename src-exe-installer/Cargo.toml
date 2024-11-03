@@ -1,0 +1,19 @@
+[package]
+name = "ahqstore-user-daemon"
+version = "1.0.0"
+edition = "2021"
+
+[dependencies]
+serde = { version = "1.0.214", features = ["derive"] }
+serde_json = "1.0.132"
+tokio = { version = "1.41.0", features = [
+  "macros",
+  "net",
+  "process",
+  "rt",
+  "time",
+] }
+win32_notif = "0.4"
+
+[build-dependencies]
+tauri-winres = "0.1.1"

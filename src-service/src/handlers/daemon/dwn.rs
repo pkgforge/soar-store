@@ -65,7 +65,7 @@ pub async fn av_scan(resp: &mut Library, state: &mut DaemonState, imp: &mut bool
       if !av_flagged.unwrap_or(true) {
         resp.status = AppStatus::Installing;
 
-        if let Some(x) = install_app(&app).await {
+        if let Some(x) = install_app(&app, resp.is_update).await {
           state.step = Step::Installing;
           state.data = Some(DaemonData::Inst(x));
         } else {
@@ -107,18 +107,20 @@ pub async fn handle_inst(resp: &mut Library, state: &mut DaemonState, imp: &mut 
           _ => handle_exit(imp, false, resp, state),
         }
       }
-      InstallResult::Thread(x) => if x.is_finished() {
-        let res = x.await.unwrap();
+      InstallResult::Thread(x) => {
+        if x.is_finished() {
+          let res = x.await.unwrap();
 
-        handle_exit(
-          imp,
-          match res {
-            Some(()) => true,
-            _ => false,
-          },
-          resp,
-          state,
-        )
+          handle_exit(
+            imp,
+            match res {
+              Some(()) => true,
+              _ => false,
+            },
+            resp,
+            state,
+          )
+        }
       }
     }
   }

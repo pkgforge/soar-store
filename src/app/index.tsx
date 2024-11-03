@@ -27,7 +27,7 @@ import fetchPrefs, {
   setConfig,
 } from "./resources/utilities/preferences";
 import { sendNotification } from "@tauri-apps/plugin-notification";
-import { get_home } from "./resources/core";
+import { get_home, get_sha } from "./resources/core";
 import {
   defaultDark,
   defaultLight,
@@ -43,6 +43,7 @@ interface AppProps {
 
 function Render(props: AppProps) {
   runner();
+
   const { auth } = props;
   let [page, changePage] = useState("home"),
     [admin, setIsAdmin] = useState(false),
@@ -132,6 +133,8 @@ function Render(props: AppProps) {
 
       //Fetch Home
       try {
+        await get_sha();
+
         console.log("Fetching home...");
 
         const home = await get_home();

@@ -1,11 +1,8 @@
-use std::{
-  fs,
-  process::Command,
-};
+use std::{fs, process::Command};
 
 use ahqstore_types::InstallerFormat;
 
-use super::{UninstallResult, InstallResult};
+use super::{InstallResult, UninstallResult};
 use crate::utils::{
   chmod, get_installer_file, get_program_folder, get_programs, get_target_lnk,
   structs::{AHQStoreApplication, AppData},
@@ -23,7 +20,9 @@ pub async fn install_app(app: &AHQStoreApplication) -> Option<InstallResult> {
     InstallerFormat::LinuxAppImage => {
       deploy_appimg(&file, app);
 
-      Some(InstallResult::Child(Command::new("bash").arg("true").spawn().ok()?))
+      Some(InstallResult::Child(
+        Command::new("bash").arg("true").spawn().ok()?,
+      ))
     }
     _ => None,
   }

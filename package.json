@@ -14,9 +14,9 @@
     "ahqstore-types": "link:src-ahqstore-types\\pkg",
     "autoprefixer": "^10.4.20",
     "clsx": "^2.1.1",
-    "daisyui": "^4.12.13",
-    "embla-carousel-react": "^8.3.0",
-    "lucide-react": "^0.453.0",
+    "daisyui": "^4.12.14",
+    "embla-carousel-react": "^8.3.1",
+    "lucide-react": "^0.454.0",
     "minisearch": "^7.1.0",
     "postcss": "^8.4.47",
     "react": "19.0.0-beta-26f2496093-20240514",
@@ -27,7 +27,7 @@
     "tailwindcss": "^3.4.14",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5.6.3",
-    "web-vitals": "^4.2.3"
+    "web-vitals": "^4.2.4"
   },
   "scripts": {
     "start": "cross-env BROWSER=none rsbuild dev",
@@ -54,14 +54,14 @@
     ]
   },
   "devDependencies": {
-    "@rsbuild/core": "1.0.17",
-    "@rsbuild/plugin-babel": "1.0.2",
-    "@rsbuild/plugin-react": "1.0.5",
-    "@rsbuild/plugin-svgr": "1.0.4",
+    "@rsbuild/core": "1.0.19",
+    "@rsbuild/plugin-babel": "1.0.3",
+    "@rsbuild/plugin-react": "1.0.6",
+    "@rsbuild/plugin-svgr": "1.0.5",
     "@tauri-apps/api": "2.0.3",
     "@tauri-apps/cli": "2.0.4",
-    "@types/node": "^22.7.8",
-    "@types/react": "^18.3.11",
+    "@types/node": "^22.8.7",
+    "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@types/react-modal": "^3.16.3",
     "babel-plugin-react-compiler": "19.0.0-beta-8a03594-20241020",
@@ -69,10 +69,10 @@
     "class-variance-authority": "^0.7.0",
     "cross-env": "^7.0.3",
     "cryptr": "^6.3.0",
-    "eslint": "^9.13.0",
+    "eslint": "^9.14.0",
     "eslint-plugin-react-compiler": "19.0.0-beta-8a03594-20241020",
     "prettier": "^3.3.3",
-    "shadcn": "^2.1.0"
+    "shadcn": "^2.1.4"
   },
   "repository": {
     "type": "git",

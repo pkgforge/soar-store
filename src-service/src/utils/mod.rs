@@ -51,6 +51,19 @@ pub fn get_installer_file(app: &AHQStoreApplication) -> String {
   );
 }
 
+pub fn get_custom_file(app: &AHQStoreApplication, extension: &str) -> String {
+  #[cfg(windows)]
+  return format!(
+    "{}\\ProgramData\\AHQ Store Applications\\Installers\\{}.{}",
+    &get_main_drive(),
+    &app.appId,
+    &extension
+  );
+
+  #[cfg(unix)]
+  return format!("/ahqstore/Installers/{}.{}", &app.appId, &extension);
+}
+
 pub fn get_file_on_root(file: &str) -> String {
   #[cfg(windows)]
   return format!(
