@@ -22,6 +22,8 @@ pub fn uninstall<T>(_: T) {}
 
 #[cfg(windows)]
 pub fn uninstall(win: AppWindow) {
+  use crate::utils;
+
   unsafe {
     WIN = Some(win);
   };
@@ -46,15 +48,7 @@ pub fn uninstall(win: AppWindow) {
       .unwrap()
       .success();
 
-    let _ = Command::new("taskkill.exe")
-      .arg("/F")
-      .arg("/IM")
-      .arg("ahqstore_user_daemon.exe")
-      .creation_flags(0x08000000)
-      .spawn()
-      .unwrap()
-      .wait()
-      .unwrap();
+    utils::kill_daemon();
 
     fs::remove_dir_all(r"C:\Program Files\AHQ Store");
     let rem = fs::remove_file(r"C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup\ahqstore_user_daemon.exe");

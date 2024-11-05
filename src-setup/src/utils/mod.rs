@@ -1,3 +1,6 @@
+#[cfg(windows)]
+use std::{os::windows::process::CommandExt, process::Command};
+
 use dirs::home_dir;
 use lazy_static::lazy_static;
 
@@ -31,6 +34,31 @@ lazy_static! {
 #[cfg(windows)]
 pub fn get_daemon() -> &'static str {
   r"C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup\ahqstore_user_daemon.exe"
+}
+
+#[cfg(windows)]
+pub fn kill_daemon() {
+  let _ = Command::new("taskkill.exe")
+    .arg("/F")
+    .arg("/IM")
+    .arg("ahqstore_user_daemon.exe")
+    .creation_flags(0x08000000)
+    .spawn()
+    .unwrap()
+    .wait()
+    .unwrap();
+}
+
+#[cfg(windows)]
+pub fn run_daemon(path: &str) {
+  let _ = Command::new("powershell.exe")
+    .args(["start-process"])
+    .arg(path)
+    .creation_flags(0x08000000)
+    .spawn()
+    .unwrap()
+    .wait()
+    .unwrap();
 }
 
 pub fn get_install() -> String {

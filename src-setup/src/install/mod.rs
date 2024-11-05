@@ -113,7 +113,7 @@ async fn plt_install(win: &AppWindow, client: &mut Client, files: &ReleaseData) 
 
   use crate::{
     install::msi::{install_msi, install_service},
-    utils::{get_service_dir, get_daemon},
+    utils::{get_service_dir, get_daemon, kill_daemon, run_daemon},
   };
 
   win.set_msg("Downloading...".into());
@@ -148,6 +148,8 @@ async fn plt_install(win: &AppWindow, client: &mut Client, files: &ReleaseData) 
 
   thread::sleep(Duration::from_millis(100));
 
+  kill_daemon();
+
   if &files.windows_user_runner != "" {
     download(client, &files.windows_user_runner, daemon, |perc| {
       win.set_counter(perc);
@@ -168,6 +170,8 @@ async fn plt_install(win: &AppWindow, client: &mut Client, files: &ReleaseData) 
   thread::sleep(Duration::from_secs(2));
 
   install_msi(&installer);
+
+  run_daemon(daemon);
 
   regedit::custom_uninstall();
 
