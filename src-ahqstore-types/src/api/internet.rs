@@ -105,6 +105,7 @@ pub async fn get_all_search(commit: &Commits) -> Result<Vec<SearchEntry>> {
   let total = &*AHQSTORE_TOTAL;
   let search = &*AHQSTORE_SEARCH;
 
+  #[allow(unused_mut)]
   let mut result: Vec<SearchEntry> = methods::get_full_search(total, search, &commit.ahqstore)
     .await
     .context("")?;

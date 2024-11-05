@@ -7,13 +7,19 @@ use std::{
 };
 
 use super::install::regedit::rem_reg;
+#[cfg(windows)]
 use crate::{install::regedit, AppWindow};
 
 #[cfg(windows)]
 use std::os::windows::process::CommandExt;
 
+#[cfg(windows)]
 static mut WIN: Option<AppWindow> = None;
 
+#[cfg(not(windows))]
+pub fn uninstall<T>(_: T) {}
+
+#[cfg(windows)]
 pub fn uninstall(win: AppWindow) {
   unsafe {
     WIN = Some(win);
