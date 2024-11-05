@@ -3,12 +3,12 @@ use std::fs;
 use ahqstore_types::{AHQStoreApplication, RefId, Response};
 use daemon::get_handles;
 use pipe::get_exe_process_handle;
-use serde_json::json;
+use serde_json::{json, to_string_pretty};
 use tokio::{spawn, sync::oneshot, task::JoinHandle};
 
 use crate::{
   handlers::InstallResult,
-  utils::{get_custom_file, now, ws_send},
+  utils::{get_custom_file, get_program_folder, now, ws_send},
 };
 
 static mut COUNTER: RefId = 0;
@@ -39,8 +39,8 @@ pub async fn install(path: &str, app: &AHQStoreApplication, update: bool) -> Opt
   let data = serde_json::to_string(&json!({
     "display": app.appDisplayName,
     "id": app.appId,
-    "icon": &path,
-    "path": path,
+    "icon": &icon_path,
+    "path": &path,
     "count": count,
   }))
   .ok()?;
@@ -49,15 +49,34 @@ pub async fn install(path: &str, app: &AHQStoreApplication, update: bool) -> Opt
 
   ws_send(&mut get_exe_process_handle()?, &resp).await;
 
+  let install_folder = get_program_folder(&app.appId);
+  let to_exec = format!("{}\\installer.exe", &install_folder);
+
+  let path = path.to_string();
+
+  let app_str = to_string_pretty(app).ok()?;
+  let ver = app.version.clone();
+
   Some(InstallResult::Thread(spawn(async move {
     let (tx, rx) = oneshot::channel::<bool>();
 
     get_handles().insert(
-      count + 300,
+      count,
       (
         now(),
         Box::new(move |success| {
-          tx.send(success);
+          let res: Option<()> = (move || {
+            fs::create_dir_all(&install_folder).ok()?;
+            fs::copy(&path, to_exec).ok()?;
+            fs::write(format!("{}\\app.json", &install_folder), app_str).ok()?;
+            fs::write(format!("{}\\ahqStoreVersion", &install_folder), ver).ok()?;
+            fs::remove_file(path).ok()?;
+            fs::remove_file(icon_path).ok()?;
+
+            Some(())
+          })();
+
+          tx.send(success && res.is_some()).ok();
         }),
       ),
     );

@@ -79,7 +79,6 @@ appWindow.listen<string[]>("ws_resp", async ({ payload: pload }) => {
       const toObj = await interpret(payload);
 
       if (toObj) {
-        console.log(toObj);
         if (toObj.method == "Library") {
           const data = toObj.data as Library[];
 
@@ -117,7 +116,8 @@ appWindow.listen<string[]>("ws_resp", async ({ payload: pload }) => {
           if (ref_id == toObj.ref) {
             resolve(toObj);
           }
-          if (toObj.method == "TerminateBlock") {
+          if (toObj.method == "TerminateBlock" && ref_id != 0) {
+            console.log("Removing ", ref_id);
             return false;
           }
 

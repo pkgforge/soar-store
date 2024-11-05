@@ -1,13 +1,14 @@
-use std::process::Command;
+use tokio::process::Command;
 
 use super::DEFENDER_CMD;
 
-pub fn update_win_defender() -> Option<()> {
+pub async fn update_win_defender() -> Option<()> {
   if !Command::new(DEFENDER_CMD)
     .args(["-SignatureUpdate"])
     .spawn()
     .ok()?
     .wait()
+    .await
     .ok()?
     .success()
   {

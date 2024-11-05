@@ -26,14 +26,9 @@ pub async fn run() -> Option<()> {
 
   sleep(Duration::from_millis(100)).await;
 
-  #[cfg(debug_assertions)]
   let _ = ws_send(
     pipe,
-    &[
-      26, 97, 112, 73, 14, 113, 63, 39, 122, 138, 205, 175, 4, 88, 184, 130, 93, 52, 153, 166,
-      124, 141, 100, 50, 81, 59, 182, 116, 92, 85, 209, 2, 250, 2, 46, 43, 217, 163, 69, 186, 77,
-      253,
-    ],
+    &crate::KEY_PASS,
   )
   .await;
 
@@ -62,11 +57,15 @@ pub async fn run() -> Option<()> {
               send_installing(&data, false);
               let success = run::run(&data.path).await;
 
-              let mut data = data.count.to_be_bytes().to_vec();
+              let mut resp = vec![];
 
-              data.push(if success { 1 } else { 0 });
+              resp.push(if success { 0 } else { 1 });
 
-              let _ = ws_send(pipe, &data).await;
+              resp.append(&mut data.count.to_be_bytes().to_vec());
+
+              drop(data);
+
+              let _ = ws_send(pipe, &resp).await;
             }
             Some(())
           })()

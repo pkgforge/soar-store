@@ -51,7 +51,7 @@ pub fn send_update_notif(
     ))
     .visual(Image::new(
       3,
-      icon_path.to_string(),
+      format!("file:///{}", &icon_path),
       None,
       false,
       Placement::AppLogoOverride,
@@ -148,7 +148,7 @@ pub fn send_installing(app: &QuickApplicationData, update: bool) {
     ))
     .visual(Image::new(
       3,
-      app.icon.to_string(),
+      format!("file:///{}", &app.icon),
       None,
       false,
       Placement::AppLogoOverride,

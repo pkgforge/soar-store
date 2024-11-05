@@ -1,9 +1,10 @@
 [package]
 name = "ahqstore-user-daemon"
-version = "1.0.0"
+version = "2.1.0"
 edition = "2021"
 
 [dependencies]
+chacha20poly1305 = { version = "0.10.1", features = ["heapless"] }
 serde = { version = "1.0.214", features = ["derive"] }
 serde_json = "1.0.132"
 tokio = { version = "1.41.0", features = [

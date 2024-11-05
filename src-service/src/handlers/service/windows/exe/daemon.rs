@@ -1,7 +1,9 @@
 use std::{collections::HashMap, time::Duration};
 
 use tokio::{
-  spawn, sync::mpsc::{channel, Sender}, time::sleep
+  spawn,
+  sync::mpsc::{channel, Sender},
+  time::sleep,
 };
 
 use crate::utils::{now, ws_send};
@@ -29,7 +31,7 @@ pub async fn start_exe_daemon() {
   }
 
   tokio::spawn(async move {
-    let mut count: u16 = 3_000;
+    let mut count: u16 = 0;
 
     loop {
       count += 1;
@@ -65,6 +67,8 @@ pub async fn start_exe_daemon() {
       }
 
       if let Some(mut x) = rx.try_recv().ok() {
+        println!("Resp {x:?}");
+
         let data: Vec<u8> = x.drain(1..).collect();
 
         if data.len() == 8 {
@@ -73,7 +77,10 @@ pub async fn start_exe_daemon() {
 
           let successful = x.pop().unwrap() == 0;
 
+          println!("Got data... successful: {}, entry {}", successful, data);
+
           if let Some((_, x)) = get_handles().remove(&data) {
+            println!("Got entry");
             x(successful);
           }
         }

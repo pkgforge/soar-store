@@ -6,12 +6,13 @@ export component AppWindow inherits Window {
     min-width: 350px;
     max-width: 350px;
     icon: @image-url("icon.png");
-    title: "Install AHQ Store";
+    title: "AHQ Store Setup";
     in-out property <float> counter: -1.0;
     in-out property <string> step: "";
     in-out property <string> msg: "Installing...";
     in-out property <bool> preview: false;
     in-out property <bool> indet: false;
+    in-out property <bool> uninstall: false;
     callback start-install();
     callback tos();
     callback site();
@@ -83,8 +84,8 @@ export component AppWindow inherits Window {
             HorizontalBox {
                 alignment: LayoutAlignment.center;
                 CheckBox {
-                    checked: root.preview;
-                    text: "Install Prerelease";
+                    checked: uninstall ? true : root.preview;
+                    text: uninstall ? "Uninstall" : "Install Prerelease";
                     enabled: counter == -1.0;
                     toggled => {
                         root.preview = !root.preview;
@@ -160,7 +161,7 @@ export component AppWindow inherits Window {
                 HorizontalBox {
                     alignment: LayoutAlignment.center;
                     Text {
-                        text: "By installing, you agree to our terms of service";
+                        text: uninstall ? "Please wait while we uninstall" : "By installing, you agree to our terms of service";
                     }
                 }
             }

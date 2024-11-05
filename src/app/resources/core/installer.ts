@@ -72,6 +72,7 @@ class UpdateInstallerWorker {
    * @returns This function does not return anything.
    */
   init() {
+    console.log("Worker Init success");
     return new Promise((r) => {
       // Send a request to the server to get the library
       sendWsRequest(WebSocketMessage.GetLibrary(), (_) => {});

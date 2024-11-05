@@ -1,7 +1,7 @@
 use crate::InstallMode;
 use reqwest::{Client, ClientBuilder};
-use std::env::consts::ARCH;
 use serde::{Deserialize, Serialize};
+use std::env::consts::ARCH;
 
 #[derive(Serialize, Deserialize)]
 struct Release {
@@ -22,6 +22,7 @@ pub struct ReleaseData {
   pub service: String,
   pub linux_daemon: String,
   pub deb: String,
+  pub windows_user_runner: String,
 }
 
 macro_rules! arch {
@@ -71,14 +72,31 @@ pub async fn fetch(install: &InstallMode) -> (Client, ReleaseData) {
   let mut data = ReleaseData::default();
 
   release.assets.into_iter().for_each(|x| {
-    if arch!(x.name.ends_with("x64_en-US.msi"), x.name.ends_with("arm64_en-US.msi")) {
+    if arch!(
+      x.name.ends_with("x64_en-US.msi"),
+      x.name.ends_with("arm64_en-US.msi")
+    ) {
       data.msi = x.browser_download_url;
-    } else if arch!(x.name.ends_with("amd64.deb"), x.name.ends_with("unsupported.deb")) {
+    } else if arch!(
+      x.name.ends_with("amd64.deb"),
+      x.name.ends_with("unsupported.deb")
+    ) {
       data.deb = x.browser_download_url;
-    } else if arch!(&x.name == "ahqstore_service_amd64.exe", &x.name == "ahqstore_service_arm64.exe") {
+    } else if arch!(
+      &x.name == "ahqstore_service_amd64.exe",
+      &x.name == "ahqstore_service_arm64.exe"
+    ) {
       data.service = x.browser_download_url;
-    } else if arch!(&x.name == "ahqstore_service_amd64", &x.name == "unsupported_ahqstore_service_arm64") {
+    } else if arch!(
+      &x.name == "ahqstore_service_amd64",
+      &x.name == "unsupported_ahqstore_service_arm64"
+    ) {
       data.linux_daemon = x.browser_download_url;
+    } else if arch!(
+      &x.name == "ahqstore_user_daemon_amd64.exe",
+      &x.name == "ahqstore_user_daemon_arm64.exe"
+    ) {
+      data.windows_user_runner = x.browser_download_url;
     }
   });
 

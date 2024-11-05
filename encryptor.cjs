@@ -23,6 +23,7 @@ const key2 = (process.env.KEY || "").substring(0, 32);
 writeFileSync("./src-tauri/src/encrypt", `"${key}"`);
 writeFileSync("./src-service/src/encrypt", `"${key}"`);
 writeFileSync("./src-service/src/encrypt_2", `"${key2}"`);
+writeFileSync("./src-exe-installer/src/encrypt_2", `"${key2}"`);
 
 const data = String(readFileSync("./src-tauri/src/encrypt"));
 const d2 = String(readFileSync("./src-service/src/encrypt"));

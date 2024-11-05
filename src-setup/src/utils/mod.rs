@@ -28,6 +28,11 @@ lazy_static! {
   pub static ref INSTALLERS: String = format!("{}{}Installers", &*AHQSTORE_ROOT, &SEP);
 }
 
+#[cfg(windows)]
+pub fn get_daemon() -> &'static str {
+  r"C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup\ahqstore_user_daemon.exe"
+}
+
 pub fn get_install() -> String {
   let mut path = home_dir().unwrap();
   #[cfg(windows)]

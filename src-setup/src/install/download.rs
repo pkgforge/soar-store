@@ -13,14 +13,14 @@ pub async fn download<T: FnMut(f32)>(client: &mut Client, url: &str, path: &str,
 
   let mut file = vec![];
 
-  let mut last = 0.0;
+  let mut last = 0u64;
 
   while let Some(chunk) = response.chunk().await.unwrap() {
     c += chunk.len();
 
-    if last != (c as f32 / t as f32) {
-      last = c as f32 / t as f32;
-      call(c as f32 / t as f32);
+    if last != (c as u64 * 100) / t {
+      last = (c as u64 * 100) / t;
+      call(last as f32 / 100.0);
     }
 
     file.write_all(&chunk.to_vec()).unwrap();

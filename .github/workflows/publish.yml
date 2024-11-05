@@ -297,7 +297,22 @@ jobs:
           asset_path: ./src-service/target/release/ahqstore_service.exe
           asset_name: ahqstore_service_${{ matrix.arch }}.exe
           asset_content_type: application/vnd.microsoft.portable-executable
+      
+      - name: Build User Daemon (Windows)
+        if: matrix.os == 'windows-latest'
+        run: cargo build --release
+        working-directory: src-exe-installer
 
+      - name: Upload User Daemon (Windows)
+        if: matrix.os == 'windows-latest'
+        uses: ahqstore/upload-release-assets@v60
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./src-exe-installer/target/release/ahqstore-user-daemon.exe
+          asset_name: ahqstore_user_daemon_${{ matrix.arch }}.exe
+          asset_content_type: application/vnd.microsoft.portable-executable
       
       - name: Upload Service (Linux)
         if: matrix.os == 'ubuntu-latest'

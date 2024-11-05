@@ -16,7 +16,7 @@ mod deb;
 #[cfg(windows)]
 mod msi;
 #[cfg(windows)]
-mod regedit;
+pub mod regedit;
 
 use download::download;
 
@@ -26,7 +26,7 @@ pub fn start_install(win: AppWindow, install: InstallMode) {
   unsafe { WIN = Some(win) };
 
   thread::spawn(move || {
-    let win = unsafe { WIN.as_mut().unwrap() };
+    let win = unsafe { std::mem::replace(&mut WIN, None).unwrap() };
 
     win.set_msg(SharedString::from("Getting files ready..."));
 
@@ -109,17 +109,18 @@ async fn plt_install(win: &AppWindow, client: &mut Client, files: &ReleaseData) 
 
 #[cfg(windows)]
 async fn plt_install(win: &AppWindow, client: &mut Client, files: &ReleaseData) {
-  use std::process;
+  use std::{env::current_exe, process};
 
   use crate::{
     install::msi::{install_msi, install_service},
-    utils::get_service_dir,
+    utils::{get_service_dir, get_daemon},
   };
 
   win.set_msg("Downloading...".into());
 
   let installer = get_install();
   let service = get_service_dir();
+  let daemon = get_daemon();
 
   let _ = fs::remove_file(&installer);
 
@@ -129,13 +130,34 @@ async fn plt_install(win: &AppWindow, client: &mut Client, files: &ReleaseData) 
   .await;
 
   thread::sleep(Duration::from_secs(1));
+  
   win.set_counter(0.0);
+
   thread::sleep(Duration::from_secs(3));
 
   download(client, &files.service, &service, |perc| {
     win.set_counter(perc);
   })
   .await;
+
+  win.set_counter(1.0);
+
+  thread::sleep(Duration::from_millis(100));
+
+  win.set_counter(0.0);
+
+  thread::sleep(Duration::from_millis(100));
+
+  if &files.windows_user_runner != "" {
+    download(client, &files.windows_user_runner, daemon, |perc| {
+      win.set_counter(perc);
+    })
+    .await;
+
+    win.set_counter(1.0);
+
+    thread::sleep(Duration::from_millis(100));
+  }
 
   win.set_indet(true);
 
@@ -147,6 +169,8 @@ async fn plt_install(win: &AppWindow, client: &mut Client, files: &ReleaseData) 
 
   install_msi(&installer);
 
+  regedit::custom_uninstall();
+
   thread::sleep(Duration::from_secs(3));
 
   install_service(&service);
@@ -154,6 +178,11 @@ async fn plt_install(win: &AppWindow, client: &mut Client, files: &ReleaseData) 
   thread::sleep(Duration::from_secs(1));
 
   let _ = fs::remove_file(&installer);
+
+  let _ = fs::write(
+    r"C:\Program Files\AHQ Store\uninstall.exe",
+    fs::read(current_exe().unwrap()).unwrap(),
+  );
 
   win.set_msg("Installed 🎉".into());
   win.set_indet(false);

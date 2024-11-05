@@ -124,11 +124,16 @@ pub fn launch() -> impl Future<Output = ()> {
               get_exe_tx().send(msg.into()).await;
             }
             ReadResponse::Disconnect => {
+              let _ = pipe.disconnect();
               break 'a;
             }
             _ => {}
           }
           tokio::time::sleep(Duration::from_nanos(10)).await;
+        }
+
+        unsafe {
+          EXE_DAEMON_PROCESS = None;
         }
       }
       tokio::time::sleep(Duration::from_millis(100)).await;

@@ -108,8 +108,10 @@ export default function ShowModal(props: AppDataPropsModal) {
 
   useEffect(() => {
     const id = worker.listen((lib, update) => {
+      console.log("Get");
       setUpdating(update != "UpToDate" && update != "Disabled");
 
+      console.log(installData);
       const entry = lib.find((d) => d.app_id == installData);
 
       try {
@@ -149,7 +151,10 @@ export default function ShowModal(props: AppDataPropsModal) {
       } catch (_) {}
     });
 
-    return () => worker.unlisten(id);
+    return () => {
+      console.log("Unlistening");
+      worker.unlisten(id)
+    };
   }, [installData]);
 
   useEffect(() => {

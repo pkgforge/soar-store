@@ -122,7 +122,9 @@ async fn run_daemon(mut rx: Receiver<Command>) {
     pipe::launch().await;
   });
 
-  let _ = av::update::update_win_defender();
+  tokio::spawn(async {
+    av::update::update_win_defender().await;
+  });
   let mut state = DaemonState::default();
 
   unsafe {
