@@ -6,6 +6,7 @@ use std::{
   time::Duration,
 };
 
+#[cfg(windows)]
 use super::install::regedit::rem_reg;
 #[cfg(windows)]
 use crate::{install::regedit, AppWindow};
