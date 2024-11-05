@@ -52,8 +52,8 @@ pub fn kill_daemon() {
 #[cfg(windows)]
 pub fn run_daemon(path: &str) {
   let _ = Command::new("powershell.exe")
-    .args(["start-process"])
-    .arg(path)
+    .args(["start-process", "-FilePath"])
+    .arg(format!("\"{}\"", &path))
     .creation_flags(0x08000000)
     .spawn()
     .unwrap()

@@ -46,7 +46,8 @@ pub fn relaunch_if_needed(update: &InstallMode) {
   if !is_elevated().unwrap_or(false) {
     let mut cmd = Command::new("powershell");
     let cmd = cmd.creation_flags(0x08000000);
-    let cmd = cmd.args(["start-process", &exe]);
+    let cmd = cmd.args(["start-process", "-FilePath"]);
+    let cmd = cmd.arg(format!("\"{exe}\""));
 
     if wait {
       cmd.arg("-wait");
