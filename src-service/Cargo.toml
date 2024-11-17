@@ -35,6 +35,7 @@ windows = { version = "0.58", features = [
   "Win32_System_Pipes",
   "Win32_Security",
   "Win32_System_SystemServices",
+  "Win32_System_RemoteDesktop",
 ] }
 
 [target.'cfg(unix)'.dependencies]

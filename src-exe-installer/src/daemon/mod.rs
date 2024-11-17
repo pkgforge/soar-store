@@ -44,7 +44,7 @@ pub async fn run() -> Option<()> {
         } else {
           let string_data = data.drain(2..).collect::<Vec<u8>>();
           let _ = (|| async {
-            let update = data.remove(0) == 1;
+            let update = data.remove(1) == 1;
 
             let data = String::from_utf8(string_data).ok()?;
             let data = serde_json::from_str::<QuickApplicationData>(&data).ok()?;
@@ -73,13 +73,18 @@ pub async fn run() -> Option<()> {
         }
       }
       ReadResponse::Disconnect => {
-        return Some(());
+        println!("Breaking");
+        break;
       }
       ReadResponse::None => {}
     }
 
     sleep(Duration::from_nanos(100)).await;
   }
+
+  println!("Broken");
+
+  return Some(());
 }
 
 pub enum ReadResponse {
@@ -121,9 +126,13 @@ pub async fn read_msg(pipe: &mut NamedPipeClient) -> ReadResponse {
 
       ReadResponse::Data(buf)
     }
-    Err(e) => match e.kind() {
-      ErrorKind::WouldBlock => ReadResponse::None,
-      _ => ReadResponse::None,
+    Err(e) => {
+      println!("Error: {e:?}");
+
+      match e.kind() {
+        ErrorKind::WouldBlock => ReadResponse::None,
+        _ => ReadResponse::None,
+      }
     },
   }
 }

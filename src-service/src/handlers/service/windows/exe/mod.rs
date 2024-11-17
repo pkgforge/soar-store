@@ -2,7 +2,7 @@ use std::fs;
 
 use ahqstore_types::{AHQStoreApplication, RefId, Response};
 use daemon::get_handles;
-use pipe::get_exe_process_handle;
+use pipe::{get_exe_process_handle, CONNECTED};
 use serde_json::{json, to_string_pretty};
 use tokio::{spawn, sync::oneshot, task::JoinHandle};
 
@@ -17,6 +17,10 @@ mod daemon;
 pub mod pipe;
 
 pub async fn install(path: &str, app: &AHQStoreApplication, update: bool) -> Option<InstallResult> {
+  if unsafe { !CONNECTED } {
+    return None;
+  }
+
   unsafe {
     COUNTER += 1;
   };

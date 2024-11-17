@@ -18,9 +18,9 @@ use windows::Win32::{
 };
 
 use crate::{
-  authentication::authenticate_process,
+  authentication::*,
   handlers::{get_prefs, handle_msg, GET_INSTALL_DAEMON},
-  utils::{get_iprocess, set_iprocess, set_perms, write_log},
+  utils::{get_iprocess, set_iprocess, set_perms, write_log, ws_send},
 };
 use ahqstore_types::{Command, Prefs};
 
@@ -65,7 +65,7 @@ pub async fn launch() {
 
   write_log("Started");
 
-  let pipe = get_iprocess().unwrap();
+  let mut pipe = get_iprocess().unwrap();
   loop {
     write_log("Loop");
     if let Ok(()) = pipe.connect().await {
@@ -109,7 +109,14 @@ pub async fn launch() {
           if ext >= 10 {
             ext = 0;
             let (auth, _) = authenticate_process(process_id as usize, false);
+
             if !auth {
+              let _ = pipe.disconnect();
+              break 'a;
+            }
+
+            if !is_current_logged_in_user(process_id as usize) {
+              ws_send(&mut pipe, b"kill()").await;
               let _ = pipe.disconnect();
               break 'a;
             }

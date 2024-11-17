@@ -13,6 +13,7 @@ use windows::Win32::{
   System::{Pipes::GetNamedPipeClientProcessId, SystemServices::SECURITY_DESCRIPTOR_REVISION},
 };
 
+use crate::authentication::is_current_logged_in_user;
 use crate::encryption::decrypt2;
 use crate::handlers::service::windows::exe::daemon::get_exe_tx;
 use crate::utils::write_log;
@@ -20,6 +21,7 @@ use crate::utils::write_log;
 use super::daemon::start_exe_daemon;
 
 pub static mut EXE_DAEMON_PROCESS: Option<NamedPipeServer> = None;
+pub static mut CONNECTED: bool = false;
 
 pub fn get_exe_process_handle() -> Option<&'static mut NamedPipeServer> {
   unsafe { EXE_DAEMON_PROCESS.as_mut() }
@@ -75,6 +77,7 @@ pub fn launch() -> impl Future<Output = ()> {
       write_log("[EXE]: Loop");
 
       if let Ok(()) = pipe.connect().await {
+        unsafe { CONNECTED = true };
         println!("[EXE]: Connected");
         let handle = pipe.as_raw_handle();
 
@@ -86,6 +89,11 @@ pub fn launch() -> impl Future<Output = ()> {
           let _ = GetNamedPipeClientProcessId(handle, &mut process_id as *mut _);
         }
 
+        if !is_current_logged_in_user(process_id as usize) {
+          let _ = pipe.disconnect();
+          continue;
+        }
+
         let mut authenticated = false;
 
         // Wait for 1 min 30 seconds to connect
@@ -93,8 +101,6 @@ pub fn launch() -> impl Future<Output = ()> {
         'auth: for _ in 0..=9_000 {
           match read_msg(pipe).await {
             ReadResponse::Data(msg) => {
-              #[cfg(debug_assertions)]
-              println!("Got Data");
               if "%Qzn835y37z%%^&*&^%&^%^&%^" == &decrypt2(msg).unwrap_or_default() {
                 println!("[EXE]: Authenticated");
                 authenticated = true;
@@ -119,6 +125,11 @@ pub fn launch() -> impl Future<Output = ()> {
         }
 
         'a: loop {
+          if !is_current_logged_in_user(process_id as usize) {
+            let _ = pipe.disconnect();
+            break 'a;
+          }
+
           match read_msg(pipe).await {
             ReadResponse::Data(msg) => {
               get_exe_tx().send(msg.into()).await;
@@ -131,10 +142,9 @@ pub fn launch() -> impl Future<Output = ()> {
           }
           tokio::time::sleep(Duration::from_nanos(10)).await;
         }
-
-        unsafe {
-          EXE_DAEMON_PROCESS = None;
-        }
+      }
+      unsafe {
+        CONNECTED = false;
       }
       tokio::time::sleep(Duration::from_millis(100)).await;
     }
