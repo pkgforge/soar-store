@@ -14,6 +14,7 @@ pub struct Installer {
 pub struct InstallerScheme {
   pub PackageIdentifier: String,
   pub PackageVersion: String,
+  pub Scope: String,
   pub Installers: Vec<Installer>,
 }
 
