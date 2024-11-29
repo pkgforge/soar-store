@@ -5,6 +5,7 @@ use tokio::{io::AsyncWriteExt, net::UnixListener};
 use crate::{
   authentication::authenticate_process,
   handlers::{get_prefs, handle_msg, GET_INSTALL_DAEMON},
+  structs::{rem_current_user, set_current_user},
   utils::{chmod, get_iprocess, set_iprocess, set_perms, write_log},
 };
 use ahqstore_types::{Command, Prefs};
@@ -32,6 +33,7 @@ pub async fn launch() {
   chmod("777", "/ahqstore/socket").unwrap();
 
   loop {
+    rem_current_user();
     if let Ok((stream, _)) = socket.accept().await {
       println!("Got Stream");
       set_iprocess(stream);
@@ -55,13 +57,15 @@ pub async fn launch() {
         continue;
       }
 
-      let (auth, sudoer) = authenticate_process(pid as usize, true);
+      let (auth, sudoer, user) = authenticate_process(pid as usize, true);
       if !auth {
         println!("FAILED CHECK");
         let _ = pipe.shutdown().await;
         println!("DISCONNECT");
         continue;
       }
+
+      set_current_user(user);
 
       set_perms((|| {
         if sudoer {

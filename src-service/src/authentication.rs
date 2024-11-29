@@ -50,7 +50,7 @@ pub fn is_current_logged_in_user(pid: usize) -> bool {
   .unwrap_or(false)
 }
 
-pub fn authenticate_process(pid: usize, time: bool) -> (bool, bool) {
+pub fn authenticate_process(pid: usize, time: bool) -> (bool, bool, String) {
   #[cfg(all(not(debug_assertions), windows))]
   let exe = [format!(
     r"{}\Program Files\AHQ Store\ahq-store-app.exe",
@@ -78,8 +78,11 @@ pub fn authenticate_process(pid: usize, time: bool) -> (bool, bool) {
   let process = system.process(Pid::from(pid));
 
   if let Some(process) = process {
-    let admin = (|| {
-      let groups = users.get_user_by_id(process.user_id()?)?.groups();
+    let (admin, user) = (|| {
+      let user = users.get_user_by_id(process.user_id()?)?;
+      let groups = user.groups();
+
+      let user = user.name().to_string();
 
       #[cfg(windows)]
       let admin = "Administrators";
@@ -87,18 +90,20 @@ pub fn authenticate_process(pid: usize, time: bool) -> (bool, bool) {
       #[cfg(unix)]
       let admin = "sudo";
 
-      return Some(groups.iter().find(|x| x.name() == admin).is_some());
+      return Some(
+        (groups.iter().find(|x| x.name() == admin).is_some(), user)
+      );
     })()
-    .unwrap_or(false);
+    .unwrap_or((false, "".into()));
 
     let Some(ex) = process.exe() else {
-      return (false, false);
+      return (false, false, "".into());
     };
     let exe_path = ex.to_string_lossy();
     let exe_path = exe_path.to_string();
 
     #[cfg(feature = "no_auth")]
-    return (true, admin);
+    return (true, admin, user);
 
     let running_for_secs = now() - process.start_time();
 
@@ -112,11 +117,11 @@ pub fn authenticate_process(pid: usize, time: bool) -> (bool, bool) {
 
     if exe.contains(&exe_path) {
       if time && running_for_secs > 20 {
-        return (false, admin);
+        return (false, admin, user);
       }
-      return (true, admin);
+      return (true, admin, user);
     }
   }
 
-  (false, false)
+  (false, false, "".into())
 }

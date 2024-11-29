@@ -1,9 +1,5 @@
 use std::{
-  ffi::{c_void, OsStr},
-  io::ErrorKind,
-  os::windows::io::AsRawHandle,
-  ptr,
-  time::Duration,
+  ffi::{c_void, OsStr}, io::ErrorKind, os::windows::io::AsRawHandle, ptr, time::Duration
 };
 use tokio::net::windows::named_pipe::{PipeMode, ServerOptions};
 
@@ -20,7 +16,7 @@ use windows::Win32::{
 use crate::{
   authentication::*,
   handlers::{get_prefs, handle_msg, GET_INSTALL_DAEMON},
-  utils::{get_iprocess, set_iprocess, set_perms, write_log, ws_send},
+  utils::{get_iprocess, set_iprocess, set_perms, structs::{rem_current_user, set_current_user}, write_log, ws_send},
 };
 use ahqstore_types::{Command, Prefs};
 
@@ -68,6 +64,7 @@ pub async fn launch() {
   let mut pipe = get_iprocess().unwrap();
   loop {
     write_log("Loop");
+    rem_current_user();
     if let Ok(()) = pipe.connect().await {
       println!("Connected");
       let handle = pipe.as_raw_handle();
@@ -80,12 +77,13 @@ pub async fn launch() {
         let _ = GetNamedPipeClientProcessId(handle, &mut process_id as *mut _);
       }
 
-      let (auth, admin) = authenticate_process(process_id as usize, true);
+      let (auth, admin, user) = authenticate_process(process_id as usize, true);
 
       if !auth {
         println!("Unauthenticated");
         let _ = pipe.disconnect();
       } else {
+        set_current_user(user);
         set_perms((|| {
           if admin {
             return (true, true, true);
@@ -108,7 +106,7 @@ pub async fn launch() {
           ext += 1;
           if ext >= 10 {
             ext = 0;
-            let (auth, _) = authenticate_process(process_id as usize, false);
+            let (auth, _, _) = authenticate_process(process_id as usize, false);
 
             if !auth {
               let _ = pipe.disconnect();
