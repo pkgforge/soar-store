@@ -4,42 +4,37 @@ use serde::{Deserialize, Serialize};
 
 use crate::platform::{platform_update, CLIENT};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Asset {
   pub browser_download_url: String,
   pub name: String,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Release {
   pub tag_name: String,
   pub prerelease: bool,
   pub assets: Vec<Asset>,
 }
 
-pub fn gen_asset_name() -> (String, String) {
+pub fn gen_asset_name() -> String {
   let mut installer = String::from("ahqstore_setup");
-  let mut service = String::from("ahqstore_service");
 
   if OS == "linux" {
     if ARCH == "x86_64" {
-      service.push_str("_amd64");
       installer.push_str("_linux_amd64");
     } else if ARCH == "aarch64" {
-      service.push_str("_arm64");
       installer.push_str("_linux_arm64");
     }
   } else if OS == "windows" {
     if ARCH == "x86_64" {
-      service.push_str("_amd64.exe");
-      installer.push_str("_win32_amd64");
+      installer.push_str("_win32_amd64.exe");
     } else if ARCH == "aarch64" {
-      service.push_str("_arm64.exe");
-      installer.push_str("_win32_arm64");
+      installer.push_str("_win32_arm64.exe");
     }
   }
 
-  (installer, service)
+  installer
 }
 
 pub async fn is_update_available(version: &str, pr_in: bool) -> (bool, Option<Release>) {
@@ -48,14 +43,15 @@ pub async fn is_update_available(version: &str, pr_in: bool) -> (bool, Option<Re
     .send()
     .await
   {
+    println!("Available");
     if let Ok(resp) = resp.json::<Vec<Release>>().await {
       if let Some(release) = resp.into_iter().find(|x| x.prerelease == pr_in) {
-        let (setup, service) = gen_asset_name();
+        println!("Found a release\ncurr = {}, there = {}", version, release.tag_name);
+        let setup = gen_asset_name();
 
         let setup = release.assets.iter().find(|x| &&x.name == &&setup);
-        let service = release.assets.iter().find(|x| &&x.name == &&service);
 
-        if &release.tag_name != version && setup.is_some() && service.is_some() {
+        if &release.tag_name != version && setup.is_some() {
           return (true, Some(release));
         }
       }
@@ -66,7 +62,7 @@ pub async fn is_update_available(version: &str, pr_in: bool) -> (bool, Option<Re
 }
 
 pub async fn update(release: Release) {
-  let (setup, _) = gen_asset_name();
+  let setup = gen_asset_name();
 
   let setup = release.assets.iter().find(|x| &&x.name == &&setup).unwrap();
   platform_update(&release, setup).await;

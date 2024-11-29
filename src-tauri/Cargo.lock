@@ -39,7 +39,7 @@ dependencies = [
 
 [[package]]
 name = "ahq-store-app"
-version = "2.1.0"
+version = "2.1.0-alpha.0"
 dependencies = [
  "ahqstore-types",
  "ahqstore_gh_hash",
