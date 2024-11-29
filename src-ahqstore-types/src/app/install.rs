@@ -26,6 +26,14 @@ pub struct InstallerOptions {
 #[allow(non_snake_case)]
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[cfg_attr(feature = "js", wasm_bindgen(getter_with_clone))]
+pub enum WindowsInstallScope {
+  User,
+  Machine
+}
+
+#[allow(non_snake_case)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[cfg_attr(feature = "js", wasm_bindgen(getter_with_clone))]
 pub struct InstallerOptionsWindows {
   #[doc = "🎯 Introduced in v2\n\n"]
   pub assetId: u8,
@@ -33,7 +41,12 @@ pub struct InstallerOptionsWindows {
   ///
   /// [^1]: Only if you choose WindowsZip
   pub exec: Option<String>,
-  #[doc = "🔬 Planned\n\n"]
+  #[doc = "🎯 Introduced in v2.5\n\n"]
+  /// The scope of the installer[^1]
+  ///
+  /// [^1]: Applicable for WindowsInstallerExe or WindowsZip only, WindowsInstallerMsi is treated as Machine
+  pub scope: Option<WindowsInstallScope>,
+  #[doc = "🎯 Stable as of v2.5\n\n"]
   /// Args to pass to the custom exe installer[^1]
   ///
   /// [^1]: Only if you choose WindowsInstallerExe
