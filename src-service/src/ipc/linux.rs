@@ -5,7 +5,7 @@ use tokio::{io::AsyncWriteExt, net::UnixListener};
 use crate::{
   authentication::authenticate_process,
   handlers::{get_prefs, handle_msg, GET_INSTALL_DAEMON},
-  structs::{rem_current_user, set_current_user},
+  utils::structs::{rem_current_user, set_current_user},
   utils::{chmod, get_iprocess, set_iprocess, set_perms, write_log},
 };
 use ahqstore_types::{Command, Prefs};
