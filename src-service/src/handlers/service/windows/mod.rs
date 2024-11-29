@@ -3,7 +3,7 @@ pub mod av;
 mod exe;
 mod msi;
 
-use ahqstore_types::InstallerFormat;
+use ahqstore_types::{InstallerFormat, WindowsInstallScope};
 use mslnk::ShellLink;
 use serde_json::to_string_pretty;
 use std::{
@@ -15,14 +15,17 @@ use std::{
   time::Duration,
 };
 use tokio::spawn;
+use user::{get_user_program_folder, get_user_programs, install_user_zip};
 
 use crate::utils::{
   get_installer_file, get_program_folder, get_programs, get_target_lnk,
-  structs::{AHQStoreApplication, AppData},
+  structs::{get_current_user, AHQStoreApplication, AppData},
 };
 
 use super::{InstallResult, UninstallResult};
 pub use exe::pipe;
+
+mod user;
 
 pub fn run(path: &str, args: &[&str]) -> Result<Child, Error> {
   Command::new(path)
@@ -41,17 +44,33 @@ pub fn unzip(path: &str, dest: &str) -> Result<Child, Error> {
     .spawn()
 }
 
-pub async fn install_app(app: &AHQStoreApplication, update: bool) -> Option<InstallResult> {
+pub async fn install_app(
+  app: &AHQStoreApplication,
+  update: bool,
+  user: &str,
+) -> Option<InstallResult> {
   let file = get_installer_file(app);
 
-  let Some(win32) = app.get_win_download() else {
-    return None;
-  };
+  let win32 = app.get_win_download()?;
+  let opt = app.get_win_options()?.scope.as_ref();
+  let scope = opt.unwrap_or(&WindowsInstallScope::Machine);
 
   match win32.installerType {
-    InstallerFormat::WindowsZip => load_zip(&file, app),
+    InstallerFormat::WindowsZip => match scope {
+      &WindowsInstallScope::Machine => load_zip(&file, app),
+      &WindowsInstallScope::User => install_user_zip(&file, app, user),
+    },
     InstallerFormat::WindowsInstallerMsi => install_msi(&file, app),
-    InstallerFormat::WindowsInstallerExe => exe::install(&file, app, update).await,
+    InstallerFormat::WindowsInstallerExe => {
+      exe::install(
+        &file,
+        app,
+        update,
+        matches!(scope, &WindowsInstallScope::User),
+        user,
+      )
+      .await
+    }
     _ => None,
   }
 }
@@ -195,4 +214,53 @@ pub fn list_apps() -> Option<Vec<AppData>> {
   }
 
   Some(vec)
+}
+
+pub fn list_user_apps(user: Option<String>) -> Option<Vec<(String, Vec<AppData>)>> {
+  let Some(user) = user else {
+    let mut result: Vec<(String, Vec<AppData>)> = vec![];
+
+    for x in fs::read_dir("C:\\Users").ok()? {
+      let x = x.ok()?;
+      let file = x.file_name().into_string().ok()?;
+
+      if let Some(mut data) = list_user_apps(Some(file)) {
+        result.push(data.remove(0));
+      }
+    }
+
+    return Some(result);
+  };
+
+  let folder = get_user_programs(&user);
+
+  let dirs = fs::read_dir(&folder).ok()?;
+
+  let mut vec = vec![];
+
+  for dir in dirs {
+    let dir = dir.ok()?.file_name();
+    let dir = dir.to_str().unwrap_or("unknown");
+
+    let version = fs::read_to_string(format!(
+      "{}\\{}",
+      &get_user_program_folder(&dir, &user),
+      "ahqStoreVersion"
+    ))
+    .unwrap_or("unknown".into());
+
+    if version == "unknown" {
+      let _ = fs::remove_dir_all(get_user_program_folder(&dir, &user));
+    } else if version != "custom" {
+      if msi::is_msi(dir) {
+        if msi::exists(dir).unwrap_or(false) {
+          vec.push((dir.to_owned(), version));
+        }
+      } else {
+        vec.push((dir.to_owned(), version));
+      }
+    }
+  }
+
+  Some(vec![(user, vec)])
 }

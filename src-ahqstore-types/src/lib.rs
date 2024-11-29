@@ -1,4 +1,4 @@
-#![allow(dead_code, unused_imports, reason = "Conditional compilation")]
+#![allow(dead_code, unused_imports, non_local_definitions, reason = "Conditional compilation")]
 
 use serde::{Deserialize, Serialize};
 use serde_json::{from_str, to_string, to_string_pretty};
@@ -157,6 +157,7 @@ pub struct Library {
   pub progress: f64,
   pub max: u64,
   pub app: Option<AHQStoreApplication>,
+  pub user: String
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]

@@ -30,7 +30,7 @@ dependencies = [
 
 [[package]]
 name = "ahqstore-types"
-version = "3.9.2"
+version = "3.10.3"
 dependencies = [
  "anyhow",
  "fuse-rust",

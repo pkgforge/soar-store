@@ -25,19 +25,12 @@ pub enum InstallerFormat {
   #[doc = "🎯 Stable as of v2\n\n"]
   WindowsInstallerMsi,
 
-  #[doc = "🔬 Planned as of v2.5 or v3\n\n"]
-  /// **Doesn't work**
-  /// **⚠️ AHQ Store will act just like downloading from the web and running it ONCE[^1]**
-  ///
-  /// [^1]: You'll need to provide app's final location
+  #[doc = "🎯 Stable after v2\n\n"]
   WindowsInstallerExe,
 
   #[doc = "🔬 Planned as of v3\n\n"]
   /// **Doesn't work**
   /// **Won't be worked on, until other formats are supported**
-  /// **⚠️ AHQ Store will act just like downloading from the web and running it ONCE[^1]**
-  ///
-  /// [^1]: You'll need to provide app's final location
   WindowsUWPMsix,
 
   #[doc = "🎯 Stable as of v2\n\n"]

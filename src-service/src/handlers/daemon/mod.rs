@@ -11,6 +11,7 @@ use std::{
   default,
   fs::File,
   future::{Future, IntoFuture},
+  mem::replace,
   process::Child,
   sync::mpsc::{channel, Receiver, Sender},
   thread::JoinHandle,
@@ -21,7 +22,7 @@ use tokio::{
   time::{sleep, Sleep},
 };
 
-use crate::utils::{get_iprocess, ws_send};
+use crate::utils::{get_iprocess, structs::get_current_user, ws_send};
 
 #[cfg(windows)]
 use crate::handlers::pipe;
@@ -32,6 +33,9 @@ use super::{
   service::{download_app, install_app, UninstallResult},
   uninstall_app, InstallResult,
 };
+
+#[cfg(windows)]
+use super::list_user_apps;
 
 pub static mut UPDATE_STATUS_REPORT: Option<UpdateStatusReport> = None;
 pub static mut LIBRARY: Option<Vec<Library>> = None;
@@ -92,7 +96,7 @@ pub enum Step {
 
 pub enum DaemonData {
   Dwn(DownloadData),
-  AVScan((AHQStoreApplication, JoinHandle<Option<Malicious>>)),
+  AVScan(AHQStoreApplication, JoinHandle<Option<Malicious>>),
   Inst(InstallResult),
   Unst(JoinHandle<bool>),
   None,
@@ -297,7 +301,7 @@ pub async fn check_update() -> Option<bool> {
     .await;
   }
 
-  if let Some(x) = list_apps() {
+  let mut manage = async |x: Vec<(String, String)>, user: String| {
     for (id, ver) in x {
       if &ver == "custom" {
         continue;
@@ -306,13 +310,39 @@ pub async fn check_update() -> Option<bool> {
       let app = get_app(0, id).await;
       match app {
         Response::AppData(_, id, app) => {
+          use ahqstore_types::{InstallerFormat, WindowsInstallScope};
+
+          // Skip if the user is not the currently logged in user
+          // Because WindowsInstallerExe cannot install if the user is not logged in
+          if let (Some(x), Some(y)) = (app.get_win_download(), app.get_win_options()) {
+            let scope = y.scope.as_ref().unwrap_or(&WindowsInstallScope::Machine);
+
+            if matches!(&x.installerType, &InstallerFormat::WindowsInstallerExe)
+              && matches!(scope, &WindowsInstallScope::User)
+            {
+              if get_current_user().unwrap_or("") != &user {
+                continue;
+              }
+            }
+          }
           if &ver == &app.version {
             continue;
           }
-          to_update.push((id, app));
+          to_update.push((id, app, user.clone()));
         }
         _ => {}
       }
+    }
+  };
+
+  if let Some(x) = list_apps() {
+    manage(x, "machine".into()).await;
+  }
+
+  #[cfg(windows)]
+  if let Some(x) = list_user_apps(None) {
+    for (user, apps) in x {
+      manage(apps, user).await;
     }
   }
 
@@ -331,7 +361,7 @@ pub async fn check_update() -> Option<bool> {
     return Some(false);
   }
 
-  to_update.into_iter().for_each(|(id, app)| {
+  to_update.into_iter().for_each(|(id, app, user)| {
     library.push(Library {
       app_id: id.clone(),
       is_update: true,
@@ -340,6 +370,7 @@ pub async fn check_update() -> Option<bool> {
       to: ToDo::Uninstall,
       max: 0,
       app: Some(app.clone()),
+      user: user.clone(),
     });
     library.push(Library {
       app_id: id,
@@ -349,6 +380,7 @@ pub async fn check_update() -> Option<bool> {
       to: ToDo::Install,
       app: Some(app),
       max: 0,
+      user,
     });
   });
 

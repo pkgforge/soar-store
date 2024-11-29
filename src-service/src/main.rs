@@ -1,4 +1,5 @@
 #![allow(static_mut_refs)]
+#![feature(async_closure)]
 
 #[cfg(windows)]
 use std::time::Duration;

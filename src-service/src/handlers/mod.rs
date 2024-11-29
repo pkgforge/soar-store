@@ -10,7 +10,7 @@ use tokio::{io::AsyncWriteExt, spawn};
 use crate::{
   utils::{
     get_iprocess, get_perms,
-    structs::{Command, ErrorType, Reason, Response},
+    structs::{get_current_user, Command, ErrorType, Reason, Response},
   },
   write_log,
 };
@@ -65,7 +65,15 @@ pub fn handle_msg(admin: bool, data: String) {
           }
 
           (_, _, _, Command::ListApps(ref_id)) => {
-            if let Some(x) = list_apps() {
+            if let Some(mut x) = list_apps() {
+              let user = get_current_user().unwrap_or("");
+
+              if let Some(mut a) = list_user_apps(Some(user.into())) {
+                let (_, mut data) = a.remove(0);
+                drop(a);
+                x.extend(data);
+              }
+
               let val = Response::as_msg(Response::ListApps(ref_id, x));
 
               ws_send(&mut ws, &val).await;

@@ -26,7 +26,6 @@ pub async fn handle(resp: &mut Library, state: &mut DaemonState, imp: &mut bool)
         println!("100 %");
         let _ = x.file.flush();
         let _ = x.file.sync_all();
-        //let app = x.app.clone();
 
         //Drop the File
         let mut data = replace(&mut state.data, None);
@@ -38,7 +37,7 @@ pub async fn handle(resp: &mut Library, state: &mut DaemonState, imp: &mut bool)
         resp.status = AppStatus::AVScanning;
 
         let inst = get_installer_file(&x.app);
-        state.data = Some(DaemonData::AVScan((x.app, av::scan::scan_threaded(&inst))));
+        state.data = Some(DaemonData::AVScan(x.app, av::scan::scan_threaded(&inst)));
         state.step = Step::AVScanning;
         *imp = true;
       }
@@ -50,13 +49,13 @@ pub async fn handle(resp: &mut Library, state: &mut DaemonState, imp: &mut bool)
 pub async fn av_scan(resp: &mut Library, state: &mut DaemonState, imp: &mut bool) {
   let data = state.data.as_mut().unwrap();
 
-  if let DaemonData::AVScan((app, x)) = data {
+  if let DaemonData::AVScan(app, x) = data {
     if x.is_finished() {
       *imp = true;
       let mut data = replace(&mut state.data, None);
       let data = data.expect("Impossible to be null");
 
-      let DaemonData::AVScan((app, x)) = data else {
+      let DaemonData::AVScan(app, x) = data else {
         panic!("Impossible panic");
       };
 
@@ -65,7 +64,7 @@ pub async fn av_scan(resp: &mut Library, state: &mut DaemonState, imp: &mut bool
       if !av_flagged.unwrap_or(true) {
         resp.status = AppStatus::Installing;
 
-        if let Some(x) = install_app(&app, resp.is_update).await {
+        if let Some(x) = install_app(&app, resp.is_update, &resp.user).await {
           state.step = Step::Installing;
           state.data = Some(DaemonData::Inst(x));
         } else {

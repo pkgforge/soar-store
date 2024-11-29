@@ -16,7 +16,13 @@ static mut COUNTER: RefId = 0;
 mod daemon;
 pub mod pipe;
 
-pub async fn install(path: &str, app: &AHQStoreApplication, update: bool) -> Option<InstallResult> {
+pub async fn install(
+  path: &str,
+  app: &AHQStoreApplication,
+  update: bool,
+  _user: bool,
+  _username: &str,
+) -> Option<InstallResult> {
   if unsafe { !CONNECTED } {
     return None;
   }
@@ -40,12 +46,19 @@ pub async fn install(path: &str, app: &AHQStoreApplication, update: bool) -> Opt
     resp.push(0);
   }
 
+  let windows_options = app.get_win_options()?;
+  let args = windows_options
+    .installerArgs
+    .as_ref()
+    .map_or_else(|| vec![], |x| x.iter().map(|x| x.as_str()).collect());
+
   let data = serde_json::to_string(&json!({
     "display": app.appDisplayName,
     "id": app.appId,
     "icon": &icon_path,
     "path": &path,
     "count": count,
+    "args": args
   }))
   .ok()?;
 

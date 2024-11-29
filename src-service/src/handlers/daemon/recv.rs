@@ -3,7 +3,7 @@ use std::sync::mpsc::Receiver;
 
 use crate::{
   handlers::{get_app, get_app_local},
-  utils::{ws_send, ServiceIpc},
+  utils::{structs::get_current_user, ws_send, ServiceIpc},
 };
 
 use super::{lib_msg, BETWEEN};
@@ -26,6 +26,10 @@ pub async fn recv(
             progress: 0.0,
             max: 0,
             app: None,
+            // It is important to clone here so that it can be processed correctly even if the user changes
+            user: get_current_user()
+              .expect("Impossible to be null")
+              .to_string(),
           });
         }
         Command::UninstallApp(ref_id, app_id) => {
@@ -38,6 +42,10 @@ pub async fn recv(
               max: 0,
               status: AppStatus::Pending,
               to: ToDo::Uninstall,
+              // It is important to clone here so that it can be processed correctly even if the user changes
+              user: get_current_user()
+                .expect("Impossible to be null")
+                .to_string(),
             });
           }
         }

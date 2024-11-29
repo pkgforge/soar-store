@@ -25,7 +25,7 @@ pub struct InstallerOptions {
 
 #[allow(non_snake_case)]
 #[derive(Serialize, Deserialize, Debug, Clone)]
-#[cfg_attr(feature = "js", wasm_bindgen(getter_with_clone))]
+#[cfg_attr(feature = "js", wasm_bindgen)]
 pub enum WindowsInstallScope {
   User,
   Machine
