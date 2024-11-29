@@ -65,9 +65,11 @@ pub fn handle_msg(admin: bool, data: String) {
           }
 
           (_, _, _, Command::ListApps(ref_id)) => {
+            #[allow(unused)]
             if let Some(mut x) = list_apps() {
               let user = get_current_user().unwrap_or("");
 
+              #[cfg(windows)]
               if let Some(mut a) = list_user_apps(Some(user.into())) {
                 let (_, mut data) = a.remove(0);
                 drop(a);

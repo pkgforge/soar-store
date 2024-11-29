@@ -9,7 +9,7 @@ use crate::utils::{
 };
 pub mod av;
 
-pub async fn install_app(app: &AHQStoreApplication, _update: bool) -> Option<InstallResult> {
+pub async fn install_app<T>(app: &AHQStoreApplication, _update: bool, _: &T) -> Option<InstallResult> {
   let file = get_installer_file(app);
 
   let Some(linux) = app.get_linux_download() else {
