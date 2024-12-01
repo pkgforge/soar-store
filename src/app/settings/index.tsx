@@ -59,7 +59,7 @@ export default function Init(props: InitProps) {
   useEffect(() => {
     getVersion()
       .then(setVer)
-      .catch(() => {});
+      .catch(() => { });
 
     const ver = getWindowsName();
     setOs(ver);
@@ -112,9 +112,8 @@ export default function Init(props: InitProps) {
         <div className="flex flex-col items-center text-center justify-center">
           <div className="my-auto">
             <h1
-              className={`block mt-[45%] text-3xl ${
-                props.dark ? "text-slate-300" : "text-slate-900"
-              }`}
+              className={`block mt-[45%] text-3xl ${props.dark ? "text-slate-300" : "text-slate-900"
+                }`}
             >
               Please wait...
             </h1>
@@ -127,9 +126,8 @@ export default function Init(props: InitProps) {
 
       <div className={darkMode(["menu"], props.dark)}>
         <h1
-          className={`mt-3 text-3xl ${
-            props.dark ? "text-white" : "text-slate-700"
-          } mr-auto ml-3`}
+          className={`mt-3 text-3xl ${props.dark ? "text-white" : "text-slate-700"
+            } mr-auto ml-3`}
         >
           General
         </h1>
@@ -171,9 +169,8 @@ export default function Init(props: InitProps) {
         />
 
         <h1
-          className={`mt-3 text-3xl ${
-            props.dark ? "text-white" : "text-slate-700"
-          } mr-auto ml-3`}
+          className={`mt-3 text-3xl ${props.dark ? "text-white" : "text-slate-700"
+            } mr-auto ml-3`}
         >
           Advanced
         </h1>
@@ -208,9 +205,8 @@ export default function Init(props: InitProps) {
         )}
 
         <h1
-          className={`mt-3 text-3xl ${
-            props.dark ? "text-white" : "text-slate-700"
-          } mr-auto ml-3`}
+          className={`mt-3 text-3xl ${props.dark ? "text-white" : "text-slate-700"
+            } mr-auto ml-3`}
         >
           About
         </h1>
@@ -222,7 +218,7 @@ export default function Init(props: InitProps) {
             title={os != "linux" ? `Operating System` : "Linux Distro"}
             description={os != "linux" ? `Windows ${os}` : linuxVer}
             Icon={getWindows()}
-            onClick={() => {}}
+            onClick={() => { }}
             disabled={true}
             active={true}
             noCheckbox={true}
@@ -234,7 +230,7 @@ export default function Init(props: InitProps) {
             dark={props.dark}
             title="Build"
             url={true}
-            description={`AHQ Store v${ver} (Build ${versionToBuild(ver)})`}
+            description={`Soar Store v${ver} (Build ${versionToBuild(ver)})`}
             Icon={"/logo192.png"}
             onClick={() => {
               openUrl("https://ahqstore.github.io");
@@ -279,9 +275,8 @@ export default function Init(props: InitProps) {
         </div>
 
         <h1
-          className={`mt-3 text-3xl ${
-            props.dark ? "text-white" : "text-slate-700"
-          } mr-auto ml-3`}
+          className={`mt-3 text-3xl ${props.dark ? "text-white" : "text-slate-700"
+            } mr-auto ml-3`}
         >
           Toolkits
         </h1>

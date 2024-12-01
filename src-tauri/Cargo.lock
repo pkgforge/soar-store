@@ -38,40 +38,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "ahq-store-app"
-version = "2.1.0-alpha.0"
-dependencies = [
- "ahqstore-types",
- "ahqstore_gh_hash",
- "anyhow",
- "async-recursion",
- "bcrypt",
- "chacha20poly1305",
- "discord-rich-presence",
- "is_elevated",
- "lazy_static",
- "open",
- "openssl-sys",
- "reqwest",
- "serde",
- "serde_json",
- "tauri",
- "tauri-build",
- "tauri-plugin-fs",
- "tauri-plugin-http",
- "tauri-plugin-notification",
- "tauri-plugin-process",
- "tauri-plugin-single-instance",
- "tokio",
- "updater",
- "whatadistro",
- "windows 0.58.0",
- "wry",
-]
-
-[[package]]
 name = "ahqstore-types"
 version = "3.10.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1f6b14281539b7ad29356d58b054bfdc995ec3a480ee8a7cb637109939979b4c"
 dependencies = [
  "anyhow",
  "fuse-rust",
@@ -558,7 +528,7 @@ checksum = "d38f2da7a0a2c4ccf0065be06397cc26a81f4e528be095826eee9d4adbb8c60f"
 dependencies = [
  "byteorder",
  "fnv",
- "uuid 1.11.0",
+ "uuid",
 ]
 
 [[package]]
@@ -996,19 +966,6 @@ dependencies = [
  "libc",
  "redox_users",
  "winapi",
-]
-
-[[package]]
-name = "discord-rich-presence"
-version = "0.2.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a75db747ecd252c01bfecaf709b07fcb4c634adf0edb5fed47bc9c3052e7076b"
-dependencies = [
- "serde",
- "serde_derive",
- "serde_json",
- "serde_repr",
- "uuid 0.8.2",
 ]
 
 [[package]]
@@ -2171,15 +2128,6 @@ checksum = "173609498df190136aa7dea1a91db051746d339e18476eed5ca40521f02d7aa5"
 dependencies = [
  "is-docker",
  "once_cell",
-]
-
-[[package]]
-name = "is_elevated"
-version = "0.1.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5299060ff5db63e788015dcb9525ad9b84f4fd9717ed2cbdeba5018cbf42f9b5"
-dependencies = [
- "winapi",
 ]
 
 [[package]]
@@ -3757,7 +3705,7 @@ dependencies = [
  "serde",
  "serde_json",
  "url",
- "uuid 1.11.0",
+ "uuid",
 ]
 
 [[package]]
@@ -4054,6 +4002,34 @@ name = "smallvec"
 version = "1.13.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3c5e1a9a646d36c3599cd173a41282daf47c44583ad367b8e6837255952e5c67"
+
+[[package]]
+name = "soar-store-app"
+version = "2.1.0-alpha.0"
+dependencies = [
+ "ahqstore-types",
+ "ahqstore_gh_hash",
+ "anyhow",
+ "async-recursion",
+ "bcrypt",
+ "chacha20poly1305",
+ "lazy_static",
+ "open",
+ "openssl-sys",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-fs",
+ "tauri-plugin-http",
+ "tauri-plugin-notification",
+ "tauri-plugin-process",
+ "tauri-plugin-single-instance",
+ "tokio",
+ "whatadistro",
+ "wry",
+]
 
 [[package]]
 name = "socket2"
@@ -4411,7 +4387,7 @@ dependencies = [
  "thiserror 2.0.3",
  "time",
  "url",
- "uuid 1.11.0",
+ "uuid",
  "walkdir",
 ]
 
@@ -4464,7 +4440,7 @@ dependencies = [
  "tauri-plugin",
  "thiserror 1.0.69",
  "url",
- "uuid 1.11.0",
+ "uuid",
 ]
 
 [[package]]
@@ -4610,7 +4586,7 @@ dependencies = [
  "toml 0.8.2",
  "url",
  "urlpattern",
- "uuid 1.11.0",
+ "uuid",
  "walkdir",
 ]
 
@@ -5038,16 +5014,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8ecb6da28b8a351d773b68d5825ac39017e680750f980f3a1a85cd8dd28a47c1"
 
 [[package]]
-name = "updater"
-version = "2.1.0"
-dependencies = [
- "dirs",
- "lazy_static",
- "reqwest",
- "serde",
-]
-
-[[package]]
 name = "url"
 version = "2.5.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5088,15 +5054,6 @@ name = "utf8_iter"
 version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b6c140620e7ffbb22c2dee59cafe6084a59b5ffc27a8859a5f0d494b5d52b6be"
-
-[[package]]
-name = "uuid"
-version = "0.8.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bc5cf98d8186244414c848017f0e2676b3fcb46807f6668a97dfe67359a3c4b7"
-dependencies = [
- "getrandom 0.2.15",
-]
 
 [[package]]
 name = "uuid"

@@ -1,9 +1,5 @@
 use async_recursion::async_recursion;
 
-#[cfg(windows)]
-use tokio::net::windows::named_pipe::{ClientOptions, PipeMode};
-
-#[cfg(unix)]
 use tokio::net::UnixStream;
 use tokio::sync::Mutex;
 
@@ -59,127 +55,104 @@ impl WsConnection {
 
   #[async_recursion]
   pub async unsafe fn start(&mut self, reinstall_astore: fn(), tries: u8) {
-    #[cfg(windows)]
-    let path = OsStr::new(r"\\.\pipe\ahqstore-service-api-v3");
+    
+    // match ipc_gen_0x68 {
+    //   Ok(ipc) => {
+    //     let mut len: [u8; 8] = [0; 8];
 
-    let reinstall = || async {
-      tokio::time::sleep(Duration::from_millis(5)).await;
-      if tries > 20 {
-        reinstall_astore();
-        false
-      } else {
-        true
-      }
-    };
+    //     loop {
+    //       // Reading Pending Messages
+    //       match ipc.try_read(&mut len) {
+    //         Ok(0) => {}
+    //         Ok(8) => {
+    //           let size = usize::from_be_bytes(len);
 
-    #[cfg(windows)]
-    let ipc_gen_0x68 = ClientOptions::new().pipe_mode(PipeMode::Message).open(path);
+    //           let mut data: Vec<u8> = vec![];
+    //           let mut bit = [0u8];
 
-    #[cfg(unix)]
-    let ipc_gen_0x68 = UnixStream::connect("/ahqstore/socket")
-      .await;
+    //           let mut iter = 0i64;
+    //           loop {
+    //             iter += 1;
+    //             if iter == i64::MAX {
+    //               reinstall_astore();
+    //             }
+    //             if data.len() == size {
+    //               break;
+    //             }
+    //             match ipc.try_read(&mut bit) {
+    //               Ok(_) => {
+    //                 data.push(bit[0]);
+    //               }
+    //               Err(e) => match e.kind() {
+    //                 ErrorKind::WouldBlock => {}
+    //                 e => {
+    //                   println!("Byte: {e:?}");
+    //                   if &format!("{e:?}") != "Uncategorized" {
+    //                     break;
+    //                   }
+    //                 }
+    //               },
+    //             }
+    //           }
 
-    match ipc_gen_0x68 {
-      Ok(ipc) => {
-        let mut len: [u8; 8] = [0; 8];
+    //           if data.len() == usize::from_be_bytes(len) {
+    //             let stri = String::from_utf8_lossy(&data);
+    //             let stri = stri.to_string();
 
-        loop {
-          // Reading Pending Messages
-          match ipc.try_read(&mut len) {
-            Ok(0) => {}
-            Ok(8) => {
-              let size = usize::from_be_bytes(len);
+    //             if let Some(win) = WINDOW.as_mut() {
+    //               win.emit("ws_resp", &[stri]).unwrap_or(());
+    //             }
+    //           } else {
+    //             println!("Packet Rejected!");
+    //           }
+    //         }
+    //         Ok(t) => {
+    //           println!("huh {t}");
+    //           break;
+    //         }
+    //         Err(e) => match e.kind() {
+    //           ErrorKind::WouldBlock => {}
+    //           e => {
+    //             println!("Len: {e:?}");
+    //             break;
+    //           }
+    //         },
+    //       }
 
-              let mut data: Vec<u8> = vec![];
-              let mut bit = [0u8];
+    //       //Sending Messages
+    //       if let Ok(ref mut x) = self.to_send.try_lock() {
+    //         if x.len() > 0 {
+    //           let msg = x.remove(0);
+    //           let len = msg.len().to_be_bytes();
 
-              let mut iter = 0i64;
-              loop {
-                iter += 1;
-                if iter == i64::MAX {
-                  reinstall_astore();
-                }
-                if data.len() == size {
-                  break;
-                }
-                match ipc.try_read(&mut bit) {
-                  Ok(_) => {
-                    data.push(bit[0]);
-                  }
-                  Err(e) => match e.kind() {
-                    ErrorKind::WouldBlock => {}
-                    e => {
-                      println!("Byte: {e:?}");
-                      if &format!("{e:?}") != "Uncategorized" {
-                        break;
-                      }
-                    }
-                  },
-                }
-              }
+    //           let mut data = vec![];
+    //           for byte in len {
+    //             data.push(byte);
+    //           }
+    //           for byte in msg.as_bytes() {
+    //             data.push(*byte);
+    //           }
 
-              if data.len() == usize::from_be_bytes(len) {
-                let stri = String::from_utf8_lossy(&data);
-                let stri = stri.to_string();
+    //           if let Err(_) = ipc.try_write(&data) {
+    //             println!("{data:?} resulted in error");
+    //           }
+    //         }
+    //       }
 
-                if let Some(win) = WINDOW.as_mut() {
-                  win.emit("ws_resp", &[stri]).unwrap_or(());
-                }
-              } else {
-                println!("Packet Rejected!");
-              }
-            }
-            Ok(t) => {
-              println!("huh {t}");
-              break;
-            }
-            Err(e) => match e.kind() {
-              ErrorKind::WouldBlock => {}
-              e => {
-                println!("Len: {e:?}");
-                break;
-              }
-            },
-          }
-
-          //Sending Messages
-          if let Ok(ref mut x) = self.to_send.try_lock() {
-            if x.len() > 0 {
-              let msg = x.remove(0);
-              let len = msg.len().to_be_bytes();
-
-              let mut data = vec![];
-              for byte in len {
-                data.push(byte);
-              }
-              for byte in msg.as_bytes() {
-                data.push(*byte);
-              }
-
-              if let Err(_) = ipc.try_write(&data) {
-                println!("{data:?} resulted in error");
-              }
-            }
-          }
-
-          #[cfg(windows)]
-          tokio::time::sleep(Duration::from_nanos(1)).await;
-
-          #[cfg(not(windows))]
-          tokio::time::sleep(Duration::from_nanos(100)).await;
-        }
-        drop(ipc);
-        if reinstall().await {
-          self.start(reinstall_astore, tries + 1).await;
-        }
-      }
-      e => {
-        println!("{tries}: {e:?}");
-        if reinstall().await {
-          self.start(reinstall_astore, tries + 1).await;
-        }
-      }
-    }
+    //       tokio::time::sleep(Duration::from_nanos(100)).await;
+    //     }
+    //     drop(ipc);
+    //     if reinstall().await {
+    //       self.start(reinstall_astore, tries + 1).await;
+    //     }
+    //   }
+    //   e => {
+    //     println!("{tries}: {e:?}");
+    //     if reinstall().await {
+    //       self.start(reinstall_astore, tries + 1).await;
+    //     }
+    //   }
+    // }
   }
 }
 

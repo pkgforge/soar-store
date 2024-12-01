@@ -46,7 +46,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               tag_name: !alpha ? version : `alpha-${alphaId}`,
-              name: alpha ? `AHQ Store Alpha v${version}-next-${alphaId}` : `AHQ Store v${version}`,
+              name: alpha ? `Soar Store Alpha v${version}-next-${alphaId}` : `Soar Store v${version}`,
               body: String(fs.readFileSync("./latest.md")),
               draft: true,
               prerelease: alpha
@@ -92,7 +92,6 @@ jobs:
               return data.upload_url;
             }
 
-
   publish-cargo:
     name: Publish ahqstore-types to cargo
 
@@ -131,12 +130,12 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: nightly
-      
+
       - name: Setup NodeJS
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          registry-url: 'https://registry.npmjs.org'
+          registry-url: "https://registry.npmjs.org"
 
       - name: Install wasm-pack
         run: npm i -g wasm-pack
@@ -152,7 +151,6 @@ jobs:
         continue-on-error: true
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AHQSTORE_TYPES }}
-
 
   make-setup:
     needs: create-release
@@ -177,7 +175,7 @@ jobs:
           - os: ubuntu-latest
             target: aarch64-unknown-linux-gnu
             arch: arm64
-    
+
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -253,7 +251,7 @@ jobs:
           node-version: 20
 
       - name: Setup pnpm
-        run: npm i -g pnpm 
+        run: npm i -g pnpm
 
       - name: Install Rust Nightly
         uses: dtolnay/rust-toolchain@stable
@@ -297,7 +295,7 @@ jobs:
           asset_path: ./src-service/target/release/ahqstore_service.exe
           asset_name: ahqstore_service_${{ matrix.arch }}.exe
           asset_content_type: application/vnd.microsoft.portable-executable
-      
+
       - name: Build User Daemon (Windows)
         if: matrix.os == 'windows-latest'
         run: cargo build --release
@@ -313,7 +311,7 @@ jobs:
           asset_path: ./src-exe-installer/target/release/ahqstore-user-daemon.exe
           asset_name: ahqstore_user_daemon_${{ matrix.arch }}.exe
           asset_content_type: application/vnd.microsoft.portable-executable
-      
+
       - name: Upload Service (Linux)
         if: matrix.os == 'ubuntu-latest'
         uses: ahqstore/upload-release-assets@v60
@@ -377,7 +375,7 @@ jobs:
 
   #         rustup toolchain install nightly
   #         rustup target install aarch64-unknown-linux-gnu
-          
+
   #         cd src-ahqstore-types
   #         npm i -g wasm-pack
   #         wasm-pack build --release -- --features js
@@ -412,7 +410,7 @@ jobs:
 
   #         pnpm build
   #         pnpm tauri build -v --target aarch64-unknown-linux-gnu
-    
+
   #     - name: Upload Artifacts
   #       uses: actions/upload-artifact@v4
   #       with:
@@ -421,7 +419,7 @@ jobs:
   #           src-service/target/release/
   #           src-tauri/target/release/
 
-  #     - name: Upload Service 
+  #     - name: Upload Service
   #       uses: ahqstore/upload-release-assets@v60
   #       env:
   #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -440,8 +438,8 @@ jobs:
   #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   #       with:
   #         upload_url: ${{ needs.create-release.outputs.upload_url }}
-  #         asset_name: AHQ Store_${{ env.APP_VERSION }}_${{ matrix.deb }}.deb
-  #         asset_path: ./src-tauri/target/release/bundle/deb/AHQ Store_${{ env.APP_VERSION }}_${{ matrix.deb }}.deb
+  #         asset_name: Soar Store_${{ env.APP_VERSION }}_${{ matrix.deb }}.deb
+  #         asset_path: ./src-tauri/target/release/bundle/deb/Soar Store_${{ env.APP_VERSION }}_${{ matrix.deb }}.deb
   #         asset_content_type: application/octet-stream
 
   #     - name: Upload .rpm Bundle
@@ -450,8 +448,8 @@ jobs:
   #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   #       with:
   #         upload_url: ${{ needs.create-release.outputs.upload_url }}
-  #         asset_name: AHQ Store_${{ env.APP_VERSION }}_${{ matrix.rpm }}.rpm
-  #         asset_path: ./src-tauri/target/release/bundle/rpm/AHQ Store-${{ env.APP_VERSION }}-1.${{ matrix.rpm }}.rpm
+  #         asset_name: Soar Store_${{ env.APP_VERSION }}_${{ matrix.rpm }}.rpm
+  #         asset_path: ./src-tauri/target/release/bundle/rpm/Soar Store-${{ env.APP_VERSION }}-1.${{ matrix.rpm }}.rpm
   #         asset_content_type: application/octet-stream
 
   #     - name: Upload .AppImage bundle
@@ -460,8 +458,8 @@ jobs:
   #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   #       with:
   #         upload_url: ${{ needs.create-release.outputs.upload_url }}
-  #         asset_name: AHQ Store_${{ env.APP_VERSION }}_${{ matrix.appimage }}.AppImage
-  #         asset_path: ./src-tauri/target/release/bundle/appimage/AHQ Store_${{ env.APP_VERSION }}_${{ matrix.appimage }}.AppImage
+  #         asset_name: Soar Store_${{ env.APP_VERSION }}_${{ matrix.appimage }}.AppImage
+  #         asset_path: ./src-tauri/target/release/bundle/appimage/Soar Store_${{ env.APP_VERSION }}_${{ matrix.appimage }}.AppImage
   #         asset_content_type: application/octet-stream
 
   undraft-release:

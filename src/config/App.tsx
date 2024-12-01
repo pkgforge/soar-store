@@ -34,7 +34,7 @@ function App(props: { info: string }) {
     <header className="login-background">
       <div className={`my-auto modal ${perfs?.dark ? "modal-d" : ""}`}>
         <div className="mt-10"></div>
-        <h1 style={perfs.dark ? { color: "white" } : undefined}>AHQ Store</h1>
+        <h1 style={perfs.dark ? { color: "white" } : undefined}>Soar Store</h1>
         <div className="mt-[5rem]"></div>
         <img src={logo} alt={"logo"} width={"200px"} />
         <div className="mt-auto"></div>

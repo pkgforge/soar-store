@@ -1,9 +1,9 @@
 {
-  "name": "ahq-store-tauri",
+  "name": "soar-store",
   "version": "2.1.0",
   "type": "module",
   "private": true,
-  "license": "Creative Commons Attribution Non Commercial 3.0",
+  "license": "MIT",
   "dependencies": {
     "@radix-ui/react-context-menu": "^2.2.2",
     "@radix-ui/react-slot": "^1.1.0",

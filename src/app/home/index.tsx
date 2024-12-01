@@ -94,7 +94,7 @@ export default function Home(props: HomeProps) {
             color: props.dark ? "white" : "rgb(185,28,28)",
           }}
         >
-          AHQ Store
+          Soar Store
         </h1>
         <span
           className={`block mt-auto ${props.dark ? "text-base-content" : "text-black"} ml-2`}

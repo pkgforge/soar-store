@@ -140,7 +140,7 @@ if ((window as { __TAURI_INTERNALS__?: string }).__TAURI_INTERNALS__ == null) {
     const unlisten = appWindow.listen("needs_reinstall", () => {
       unlisten.then((f) => f());
       setInterval(
-        () => loadRender(false, "Oops! AHQ Store needs reinstall.."),
+        () => loadRender(false, "Oops! Soar Store needs reinstall.."),
         10,
       );
     });
@@ -205,7 +205,7 @@ if ((window as { __TAURI_INTERNALS__?: string }).__TAURI_INTERNALS__ == null) {
             <ContextMenuContent className="w-64">
               <ContextMenuItem disabled inset>
                 <img src="/favicon.ico" className="mr-1" style={{ "width": "1.2em", "height": "1.2em", "filter": "grayscale()" }} />
-                <span className="font-sans font-extrabold">AHQ Store v{getAppVersion()}</span>
+                <span className="font-sans font-extrabold">Soar Store v{getAppVersion()}</span>
               </ContextMenuItem>
 
               <ContextMenuSeparator />
@@ -279,7 +279,7 @@ if ((window as { __TAURI_INTERNALS__?: string }).__TAURI_INTERNALS__ == null) {
                 data-tauri-drag-region
                 className="ml-1 font-sans  font-extrabold"
               >
-                AHQ Store
+                Soar Store
               </span>
             </div>
             <div className="mb-auto flex flex-col justify-center items-center text-center">

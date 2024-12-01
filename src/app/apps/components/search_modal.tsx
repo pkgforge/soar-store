@@ -35,10 +35,9 @@ export default function SearchModal(props: AppDataPropsModal) {
               <BiArrowBack size="1.5em" />
             </button>
             <input
-              className={`search-input search-input-m-modified search-input-modified ${
-                dark ? "style-input-d search-input-m-modified-d" : ""
-              } mx-auto`}
-              placeholder={`Search the whole of AHQ Store`}
+              className={`search-input search-input-m-modified search-input-modified ${dark ? "style-input-d search-input-m-modified-d" : ""
+                } mx-auto`}
+              placeholder={`Search the whole of Soar Store`}
               value={search}
               onKeyUp={(e) => {
                 if (e.key == "Enter") {

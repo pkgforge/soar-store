@@ -16,7 +16,7 @@ export default function Package() {
       <div className="px-2 py-5 w-[98%] grid gap-3 grid-cols-3">
         <Card
           title="Lead Lang"
-          body="The Lead Programming Language by the developers of AHQ Store"
+          body="The Lead Programming Language by the developers of Soar Store"
           Icon={TbScript}
           installed={false}
           cannotRemove={true}
@@ -24,7 +24,7 @@ export default function Package() {
 
         <Card
           title="Dev Camp (Not Ready)"
-          body="Develop AHQ Store apps!"
+          body="Develop Soar Store apps!"
           Icon={FaCampground}
           installed={false}
           cannotRemove={true}

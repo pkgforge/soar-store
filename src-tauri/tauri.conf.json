@@ -8,9 +8,9 @@
   },
   "bundle": {
     "active": true,
-    "category": "Business",
+    "category": "DeveloperTool",
     "copyright": "AHQ Softwares",
-    "targets": ["msi", "deb", "rpm", "appimage"],
+    "targets": ["deb", "rpm", "appimage"],
     "externalBin": [],
     "icon": [
       "icons/32x32.png",
@@ -29,10 +29,10 @@
         "template": "assets/install.wxs"
       }
     },
-    "publisher": "AHQ Softwares and Contributors",
-    "longDescription": "AHQ Store\nAn open sourced store for downloading applications",
+    "publisher": "AHQ Softwares and Soar Team",
+    "longDescription": "Soar Store\nThe Official Soar Distribution Software",
     "resources": [],
-    "shortDescription": "AHQ Store",
+    "shortDescription": "Soar Store",
     "linux": {
       "deb": {
         "depends": ["fuse", "libfuse2"]
@@ -42,26 +42,18 @@
         "files": {}
       }
     },
-    "fileAssociations": [
-      {
-        "description": "AHQ Store binary file",
-        "ext": [".ahqstore", ".astore"],
-        "mimeType": "application/ahqstore",
-        "name": "AHQ Store File",
-        "role": "Viewer"
-      }
-    ]
+    "fileAssociations": []
   },
-  "productName": "AHQ Store",
+  "productName": "Soar Store",
   "version": "../package.json",
-  "identifier": "com.ahqstore.app",
+  "identifier": "com.soar.store",
   "app": {
     "windows": [
       {
         "center": true,
         "height": 760,
         "resizable": true,
-        "title": "AHQ Store",
+        "title": "Soar Store",
         "label": "main",
         "width": 1240,
         "minHeight": 700,

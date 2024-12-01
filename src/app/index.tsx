@@ -16,9 +16,7 @@ Components
 import { Loading } from "../config/Load";
 import Home from "./home/index";
 import Nav from "./Nav";
-import Developer from "./developer/";
 import Apps from "./apps/";
-import User from "./client/index";
 import Library from "./library";
 import Settings from "./settings/index";
 
@@ -98,23 +96,14 @@ function Render(props: AppProps) {
 
   useEffect(() => {
     (async () => {
-      const defAccess = {
-        install_apps: true,
-        launch_app: true,
-      };
-      const fullPrefs = await fetchPrefs();
-
-      const { autoUpdate, dark, font, debug, isAdmin, theme } = fullPrefs;
-
       window.prefs = {
-        ...fullPrefs,
         accessPrefs: {
-          ...defAccess,
-          ...fullPrefs.accessPrefs,
+          install_apps: true,
+          launch_app: true
         },
       };
 
-      setIsAdmin(isAdmin || false);
+      setIsAdmin(true);
 
       if (debug) {
         appWindow.listen("error", ({ payload }) => {
@@ -242,9 +231,6 @@ function Render(props: AppProps) {
         />
       );
       break;
-    case "user":
-      app = <User auth={auth} dark={dark} setPage={changePage} />;
-      break;
     case "home":
       app = (
         <Home
@@ -254,9 +240,6 @@ function Render(props: AppProps) {
           setPage={changePage}
         />
       );
-      break;
-    case "developer":
-      app = <Developer auth={auth} dark={dark} />;
       break;
     case "library":
       app = <Library dark={dark} />;

@@ -9,7 +9,7 @@ import fetchApps, {
   getResource,
 } from "../../resources/api/fetchApps";
 
-//AHQ Store Installer
+//Soar Store Installer
 import { install_app } from "../../resources/core";
 import {
   isInstalled,
@@ -62,13 +62,13 @@ const defAppData: appData = {
   displayImages: [],
   downloadUrls: [],
   install: {
-    free: () => {},
+    free: () => { },
     linux: undefined,
     win32: undefined,
     android: undefined,
   },
   repo: {
-    free: () => {},
+    free: () => { },
     author: "",
     repo: "",
   },
@@ -98,7 +98,7 @@ export default function ShowModal(props: AppDataPropsModal) {
   );
   const [author, setAuthor] = useState<AuthorObject>({
     avatar_url: "",
-    free: () => {},
+    free: () => { },
     github: "",
     id: "",
     name: "",
@@ -148,7 +148,7 @@ export default function ShowModal(props: AppDataPropsModal) {
             }
           }
         }
-      } catch (_) {}
+      } catch (_) { }
     });
 
     return () => {
@@ -241,25 +241,22 @@ export default function ShowModal(props: AppDataPropsModal) {
               />
             ) : (
               <div
-                className={`dui-loading dui-loading-lg dui-loading-ring mt-5 mx-auto mb-[0.75rem] ${
-                  props.dark ? "text-white" : ""
-                }`}
+                className={`dui-loading dui-loading-lg dui-loading-ring mt-5 mx-auto mb-[0.75rem] ${props.dark ? "text-white" : ""
+                  }`}
               />
             )}
 
             <h1
-              className={`mt-5 text-3xl text-center ${
-                dark ? "text-slate-200" : "text-slate-800"
-              }`}
+              className={`mt-5 text-3xl text-center ${dark ? "text-slate-200" : "text-slate-800"
+                }`}
             >
               {appDisplayName}
             </h1>
 
             <div className="w-[95%] mt-3 mb-auto">
               <h2
-                className={`text-2xl text-center ${
-                  dark ? "text-gray-400" : "text-gray-600"
-                }`}
+                className={`text-2xl text-center ${dark ? "text-gray-400" : "text-gray-600"
+                  }`}
               >
                 {(description || "").substring(0, 128)}
                 {description.length > 128 && <>...</>}
@@ -307,21 +304,20 @@ export default function ShowModal(props: AppDataPropsModal) {
                   {(window.os.type == "windows"
                     ? appData.install.win32 == undefined
                     : appData.install.linux == undefined) && (
-                    <div
-                      role="alert"
-                      className="dui-alert dui-alert-warning text-warning-content mb-2"
-                    >
-                      <IoWarning size={"1.5rem"} />
-                      <span>Unsupported OS</span>
-                    </div>
-                  )}
+                      <div
+                        role="alert"
+                        className="dui-alert dui-alert-warning text-warning-content mb-2"
+                      >
+                        <IoWarning size={"1.5rem"} />
+                        <span>Unsupported OS</span>
+                      </div>
+                    )}
                   <button
                     ref={button}
-                    className={`dui-btn ${
-                      updating
+                    className={`dui-btn ${updating
                         ? "bg-transparent hover:bg-transparent border-base-content hover:border-base-content text-base-content"
                         : "dui-btn-success text-success-content"
-                    } w-[60%] mb-4`}
+                      } w-[60%] mb-4`}
                     onClick={() => install()}
                   >
                     Install {updating && <>(Updating)</>}
@@ -336,9 +332,8 @@ export default function ShowModal(props: AppDataPropsModal) {
           </div>
 
           <div
-            className={`${
-              dark ? "text-slate-200" : "text-slate-800"
-            } div p-4 ml-2 w-[100%] rounded-xl shadow-xl flex flex-col overflow-scroll`}
+            className={`${dark ? "text-slate-200" : "text-slate-800"
+              } div p-4 ml-2 w-[100%] rounded-xl shadow-xl flex flex-col overflow-scroll`}
           >
             <div className="w-full">
               <h1 className="text-xl">Description</h1>
@@ -486,21 +481,21 @@ export default function ShowModal(props: AppDataPropsModal) {
                 <span className="flex items-center space-x-2">
                   {(appData.install.win32 != undefined ||
                     appData.install.winarm != undefined) && (
-                    <div
-                      className="cursor-pointer flex text-center items-center justify-center border-[1px] border-base-content px-1"
-                      onClick={() =>
-                        invoke("open", {
-                          url: "https://microsoft.com/windows",
-                        })
-                      }
-                    >
-                      <SiWindows />
-                      <span className="ml-1">
-                        Windows{" "}
-                        {appData.install.win32 == undefined ? "arm64" : ""}
-                      </span>
-                    </div>
-                  )}
+                      <div
+                        className="cursor-pointer flex text-center items-center justify-center border-[1px] border-base-content px-1"
+                        onClick={() =>
+                          invoke("open", {
+                            url: "https://microsoft.com/windows",
+                          })
+                        }
+                      >
+                        <SiWindows />
+                        <span className="ml-1">
+                          Windows{" "}
+                          {appData.install.win32 == undefined ? "arm64" : ""}
+                        </span>
+                      </div>
+                    )}
                   {appData.install.linux != undefined && (
                     <div
                       className="cursor-pointer flex text-center items-center justify-center border-[1px] border-base-content px-1"

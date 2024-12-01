@@ -16,7 +16,7 @@ export default function Nav(props: prop) {
     `${active.replace("user", "account")[0].toUpperCase()}${active
       .replace("user", "ccount")
       .replace(active[0], "")
-      .toLowerCase()} - AHQ Store`,
+      .toLowerCase()} - Soar Store`,
   );
 
   const Button = ({
@@ -50,7 +50,7 @@ export default function Nav(props: prop) {
 
       <Button
         img={<img style={{ width: "1.5em", height: "1.5em" }} src={apps} />}
-        text="Apps"
+        text="Discover"
         on="apps"
       />
 
@@ -62,13 +62,13 @@ export default function Nav(props: prop) {
 
       <div className={"mt-auto mb-auto"}></div>
 
-      {auth.currentUser?.dev && (
+      {/* {auth.currentUser?.dev && (
         <Button
           text="Dev"
           img={<img style={{ width: "1.5em", height: "1.5em" }} className="rotate-[40deg]" src={dev} />}
           on="developer"
         />
-      )}
+      )} */}
 
       <Button
         text="Library"
@@ -76,7 +76,7 @@ export default function Nav(props: prop) {
         on="library"
       />
 
-      <Button
+      {/* <Button
         text="User"
         img={
           <img
@@ -86,7 +86,7 @@ export default function Nav(props: prop) {
           />
         }
         on="user"
-      />
+      /> */}
 
       <Button
         text="Config"

@@ -17,7 +17,7 @@ const def: appData = {
   downloadUrls: [],
   appId: "%temp%",
   repo: {
-    free: () => {},
+    free: () => { },
     author: "",
     repo: "",
   },
@@ -26,7 +26,7 @@ const def: appData = {
   appShortcutName: "",
   displayImages: [],
   install: {
-    free: () => {},
+    free: () => { },
     linux: undefined,
     win32: undefined,
     android: undefined,
@@ -48,7 +48,7 @@ export default function AppCard(props: {
   const [icon, setIcon] = useState<string>();
   const [author, setAuthor] = useState<AuthorObject>({
     avatar_url: "",
-    free: () => {},
+    free: () => { },
     github: "",
     id: "",
     name: "",
@@ -80,15 +80,14 @@ export default function AppCard(props: {
       style={{ cursor: "pointer" }}
       onClick={
         appData.appId == "%temp%" || appData.appId == undefined
-          ? () => {}
+          ? () => { }
           : (props.onClick as React.MouseEventHandler<HTMLDivElement>)
       }
     >
       {icon == undefined ? (
         <div
-          className={`dui-loading dui-loading-lg dui-loading-ring mt-5 mx-auto mb-[0.75rem] ${
-            props.dark ? "text-white" : ""
-          }`}
+          className={`dui-loading dui-loading-lg dui-loading-ring mt-5 mx-auto mb-[0.75rem] ${props.dark ? "text-white" : ""
+            }`}
         />
       ) : (
         <img className="card-img" src={icon} alt="Logo"></img>
@@ -107,9 +106,9 @@ export default function AppCard(props: {
         >
           {source ||
             (appData?.authorId
-              ? author.name.replace("AHQ Store (Official)", "AHQ Store")
+              ? author.name.replace("Soar Store (Official)", "Soar Store")
               : "")}
-          {author.name == "AHQ Store (Official)" && (
+          {author.name == "Soar Store (Official)" && (
             <TbRosetteDiscountCheckFilled
               style={{
                 marginTop: "auto",

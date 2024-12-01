@@ -140,7 +140,7 @@
             </Component>
             <Component Id="Path" Guid="{{path_component_guid}}" Win64="$(var.Win64)">
                 <File Id="Path" Source="{{main_binary_path}}" KeyPath="yes" Checksum="yes"/>
-                <ServiceControl Id="DelService" Name="AHQ Store Service" Stop="both" Remove="both" Wait="no" />
+                <ServiceControl Id="DelService" Name="Soar Store Service" Stop="both" Remove="both" Wait="no" />
                 {{#each file_associations as |association| ~}}
                 {{#each association.ext as |ext| ~}}
                 <ProgId Id="{{../../product_name}}.{{ext}}" Advertise="yes" Description="{{association.description}}">

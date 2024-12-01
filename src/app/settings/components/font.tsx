@@ -39,7 +39,7 @@ export default function ListSelector(props: {
           </>
         ) : (
           <>
-            Theme<p>Choose the UI theme of AHQ Store</p>
+            Theme<p>Choose the UI theme of Soar Store</p>
           </>
         )}
       </h6>

@@ -1,0 +1,14 @@
+[package]
+name = "soar"
+version = "0.1.0"
+edition = "2024"
+description = "API to interact with the soar api"
+
+[lib]
+name = "soar"
+path = "./src/lib.rs"
+
+[dependencies]
+ahqstore-types = { version = "3.10.3", default-features = false, features = [
+  "internet",
+] }

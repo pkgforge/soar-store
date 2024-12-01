@@ -63,7 +63,7 @@ export default function StartOptions({ setOUO, dark }: Props) {
         <h1 className="my-auto ml-2 text-2xl">Edit Access Policy</h1>
       </div>
       <div className="mt-[1.5rem] flex justify-center items-center">
-        <h1 className="text-xl">Deny non-admins from launching AHQ Store</h1>
+        <h1 className="text-xl">Deny non-admins from launching Soar Store</h1>
 
         <input
           type={"checkbox"}

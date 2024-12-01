@@ -38,7 +38,7 @@ function Loading({
         <span className="text-xl fix-color mb-[11vh]">{text}</span>
       )}
       <span className="text-sm fix-color mb-[1vh]">
-        {text === "Oops! AHQ Store needs reinstall.."
+        {text === "Oops! Soar Store needs reinstall.."
           ? "We're trying to fix it for you!"
           : splashScreens[Math.floor(Math.random() * splashScreens.length)]}
       </span>
